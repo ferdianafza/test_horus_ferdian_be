@@ -7,6 +7,7 @@ const middlewareLogRequest = require('./middleware/logs');
 const upload = require('./middleware/multer');
 const userModel = require('./models/users');
 const sellerModel = require('./models/sellers');
+const adminModel = require('./models/admins');
 const foodModel = require('./models/foods');
 const orderModel = require('./models/orders');
 const cityModel = require('./models/cities');
@@ -241,9 +242,9 @@ app.get('/getAllFoods', async (req, res, next) => {
 });
 
 // ambil data makanan berdasarkan Id
-app.get('/getFoodById/:id', async (req, res, next) => {
+app.get('/getFoodById', async (req, res, next) => {
     try {
-        const foodId = req.params.id;
+        const foodId = req.body.id;
         const food = await foodModel.getFoodById(foodId);
         res.status(200).json({
             status: 200,
@@ -382,6 +383,67 @@ app.get('/provinceById', express.json(), async (req, res, next) => {
         });
     } catch (error) {
         next(error);
+    }
+});
+
+
+// ADMIN
+// Registrasi Admin
+app.post('/adminRegist', async (req, res, next) => {
+    try {
+        const dataAdmin = {
+            email: req.body.email,
+            password: req.body.password,
+            name: req.body.name,
+            provinceId: req.body.provinceId,
+            cityId: req.body.cityId,
+            address: req.body.address,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude
+        };
+
+        if (!dataAdmin.email || !dataAdmin.password || !dataAdmin.name || !dataAdmin.address || !dataAdmin.latitude || !dataAdmin.longitude) {
+            throw new Error('Semua Kolom Wajib Di Isi!!!');
+        }
+        
+        await adminModel.createNewAdmin(dataAdmin);
+        res.status(201).json({ status: '200', message: 'Registrasi Admin Berhasil' });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+// Login Admin
+app.post('/adminLogin', async (req, res, next) => {
+    try {
+        const reqDataLogin = {
+            email: req.body.email,
+            password: req.body.password
+        };
+
+        if (!reqDataLogin.email || !reqDataLogin.password) {
+            throw new Error('Email dan password harus diisi');
+        }
+        
+        const token = await adminModel.authenticateAdmin(reqDataLogin);
+        const adminData = await adminModel.getAdminByEmail(reqDataLogin.email);
+
+        res.status(200).json({
+            message: 'Login berhasil',
+            token: token,
+            data: {
+                id: adminData.id,
+                email: adminData.email,
+                name: adminData.name,
+                provinceId: adminData.provinceId,
+                cityId: adminData.cityId,
+                address: adminData.address,
+                latitude: adminData.latitude,
+                longitude: adminData.longitude
+            }
+        });
+    } catch (error) {
+        next(error); 
     }
 });
 

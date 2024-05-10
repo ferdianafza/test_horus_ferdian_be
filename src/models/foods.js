@@ -16,21 +16,15 @@ const createNewFood = async (body) => {
     const { sellerId, name, price, stock, photo, token } = body;
     const decodedToken = jwt.verify(token, jwtSecret);
     const foodId = nanoid(16);
+    const createdAt = new Date().toISOString();
+    const updatedAt = createdAt;
 
-    const SQLQuery = `INSERT INTO food (id, sellerId, name, price, stock, photo) 
-                      VALUES (?, ?, ?, ?, ?, ?)`;
-    const values = [foodId, sellerId, name, price, stock, photo];
+    const SQLQuery = `INSERT INTO food (id, sellerId, name, price, stock, photo, createdAt, updatedAt) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [foodId, sellerId, name, price, stock, photo, createdAt, updatedAt];
 
     return dbPool.execute(SQLQuery, values);
 }
-
-// const updateFood = (body, idFood) => {
-//     const SQLQuery = `  UPDATE food 
-//                         SET name='${body.name}', price='${body.price}', stock='${body.stock}' 
-//                         WHERE id=${idFood}`;
-
-//     return dbPool.execute(SQLQuery);
-// }
 
 const deleteFood = async (foodData) => {
     const { id, sellerId, token } = foodData;
@@ -53,22 +47,25 @@ const deleteFood = async (foodData) => {
 
 
 const getFoodById = async (id) => {
-    const SQLQuery = 'SELECT id, sellerId, name, price, stock, CONCAT("/assets/", photo) AS photo FROM food';
+    console.log(id);
+    const SQLQuery = 'SELECT id, sellerId, name, price, stock, CONCAT("/assets/", photo) AS photo FROM food WHERE id=?';
     const [rows, _] = await dbPool.execute(SQLQuery, [id]);
 
     if (rows.length === 0) {
         throw new Error('Data Makanan Tidak Ditemukan');
     }
-
+    console.log(rows[0]);
     return rows[0];
 }
 
 const updateFood = async (foodData) => {
     const { id, sellerId, token, price, stock, name } = foodData;
-    const food = await getFoodById(id);
+    // console.log(foodData);
+    const food = await getFoodById(foodData.id);
+    console.log(food);
     const decodedToken = jwt.verify(token, jwtSecret);
     console.log(food.sellerId, sellerId);
-    if (food.sellerId !== sellerId) {
+    if (food.sellerId != sellerId) {
         throw new Error('Anda tidak memiliki izin untuk update data makanan ini');
     }
 
