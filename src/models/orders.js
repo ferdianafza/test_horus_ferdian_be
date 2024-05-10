@@ -2,29 +2,43 @@ const dbPool = require('../config/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
+const foodModel = require('./foods');
 
 const saltRounds = 10;
 const jwtSecret = 'SECRET';
 
-const getAllFoods = () => {
+const getAllOrders = () => {
     const SQLQuery = 'SELECT id, sellerId, name, price, stock, CONCAT("/assets/", photo) AS photo FROM food';
 
     return dbPool.execute(SQLQuery);
 }
 
-const createNewFood = async (body) => {
-    const { sellerId, name, price, stock, photo, token } = body;
+const createNewOrder = async (body) => {
+    const { foodId, userId, amount, sellerId, token } = body;
     const decodedToken = jwt.verify(token, jwtSecret);
-    const foodId = nanoid(16);
+    const orderId = nanoid(16);
+    const foodData = await foodModel.getFoodById(foodId);
+    const foodPrice = foodData.price;
+    const price = foodPrice * amount;
+    const createdAt = new Date().toISOString();
+    const updatedAt = createdAt;
+    const status = "dipesan";
 
-    const SQLQuery = `INSERT INTO food (id, sellerId, name, price, stock, photo) 
-                      VALUES (?, ?, ?, ?, ?, ?)`;
-    const values = [foodId, sellerId, name, price, stock, photo];
+    const dataFoodToUpdate = {
+        foodId: foodId,
+        amount: amount
+    };
 
+
+    foodModel.updateFoodByOrderFood(dataFoodToUpdate);
+
+    const SQLQuery = `INSERT INTO orderfood (id, foodId, sellerId, userId, amount, price, status, createdAt, updatedAt) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [orderId ,foodId, sellerId, userId,amount, price, status, createdAt, updatedAt];
     return dbPool.execute(SQLQuery, values);
 }
 
-// const updateFood = (body, idFood) => {
+// const updateOrder = (body, idFood) => {
 //     const SQLQuery = `  UPDATE food 
 //                         SET name='${body.name}', price='${body.price}', stock='${body.stock}' 
 //                         WHERE id=${idFood}`;
@@ -32,9 +46,9 @@ const createNewFood = async (body) => {
 //     return dbPool.execute(SQLQuery);
 // }
 
-const deleteFood = async (foodData) => {
+const deleteOrder = async (foodData) => {
     const { id, sellerId, token } = foodData;
-    const food = await getFoodById(id);
+    const food = await getOrderById(id);
     const decodedToken = jwt.verify(token, jwtSecret);
 
     if (food.sellerId !== sellerId) {
@@ -52,7 +66,7 @@ const deleteFood = async (foodData) => {
 }
 
 
-const getFoodById = async (id) => {
+const getOrderById = async (id) => {
     const SQLQuery = 'SELECT id, sellerId, name, price, stock, CONCAT("/assets/", photo) AS photo FROM food';
     const [rows, _] = await dbPool.execute(SQLQuery, [id]);
 
@@ -63,9 +77,9 @@ const getFoodById = async (id) => {
     return rows[0];
 }
 
-const updateFood = async (foodData) => {
+const updateOrder = async (foodData) => {
     const { id, sellerId, token, price, stock, name } = foodData;
-    const food = await getFoodById(id);
+    const food = await getOrderById(id);
     const decodedToken = jwt.verify(token, jwtSecret);
     console.log(food.sellerId, sellerId);
     if (food.sellerId !== sellerId) {
@@ -83,20 +97,10 @@ const updateFood = async (foodData) => {
     return { message: 'Data makanan berhasil diperbaharui' };
 }
 
-const updateFoodByOrderFood = async (foodData) => {
-    const { foodId, amount } = foodData;
-    const food = await getFoodById(foodId);
-    const foodDataStock = food.stock - amount;
-
-    const SQLQuery = `UPDATE food SET stock=? WHERE id=?`;
-    const [result] = await dbPool.execute(SQLQuery, [foodDataStock, foodId]);
-}
-
 module.exports = {
-    getAllFoods,
-    createNewFood,
-    updateFood,
-    deleteFood,
-    getFoodById,
-    updateFoodByOrderFood,
+    getAllOrders,
+    createNewOrder,
+    updateOrder,
+    deleteOrder,
+    getOrderById
 }

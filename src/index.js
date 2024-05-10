@@ -8,6 +8,9 @@ const upload = require('./middleware/multer');
 const userModel = require('./models/users');
 const sellerModel = require('./models/sellers');
 const foodModel = require('./models/foods');
+const orderModel = require('./models/orders');
+const cityModel = require('./models/cities');
+const provinceModel = require('./models/provincies');
 const app = express();
 
 app.use(express.json());
@@ -73,8 +76,68 @@ app.post('/upload',upload.single('photo'),(req, res) => {
     })
 })
 
-// SELERS ROUTE
+//USER ROUTE
+app.post('/userRegist', async (req, res, next) => {
+    try {
+        // const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
+        // const updatedAt = createdAt;
+        const userData = {
+            email: req.body.email,
+            password: req.body.password,
+            name: req.body.name,
+            provinceId: req.body.provinceId,
+            cityId: req.body.cityId,
+            address: req.body.address,
+            latitude: req.body.latitude,
+            longitude: req.body.longitude
+        };
+        console.log(userData);
+        if (!userData.email || !userData.password || !userData.name || !userData.address || !userData.latitude || !userData.longitude) {
+            throw new Error('Semua Kolom Wajib Di Isi!!!');
+        }
+        
+        await userModel.createNewUser(userData);
+        res.status(201).json({ status: '200',
+        message: 'Registrasi User Berhasil' });
+    } catch (error) {
+        next(error); 
+    }
+});
 
+app.post('/userLogin', async (req, res, next) => {
+    try {
+        const reqDataLogin = {
+            email: req.body.email,
+            password: req.body.password
+        };
+
+        if (!reqDataLogin.email || !reqDataLogin.password) {
+            throw new Error('Email dan password harus diisi');
+        }
+        
+        const token = await userModel.authenticateUser(reqDataLogin);
+        const userData = await userModel.getUserByEmail(reqDataLogin.email);
+
+        res.status(200).json({
+            message: 'Login berhasil',
+            token: token,
+            data: {
+                id: userData.id,
+                email: userData.email,
+                name: userData.name,
+                provinceId: userData.provinceId,
+                cityId: userData.cityId,
+                address: userData.address,
+                latitude: userData.latitude,
+                longitude: userData.longitude
+            }
+        });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+// SELERS ROUTE
 // Registrasi Seller
 app.post('/sellerRegist', async (req, res, next) => {
     try {
@@ -82,6 +145,8 @@ app.post('/sellerRegist', async (req, res, next) => {
             email: req.body.email,
             password: req.body.password,
             name: req.body.name,
+            provinceId: req.body.provinceId,
+            cityId: req.body.cityId,
             address: req.body.address,
             latitude: req.body.latitude,
             longitude: req.body.longitude
@@ -92,7 +157,7 @@ app.post('/sellerRegist', async (req, res, next) => {
         }
         
         await sellerModel.createNewSeller(dataSeller);
-        res.status(201).json({ message: 'Registrasi Seller Berhasil' });
+        res.status(201).json({ status: '200', message: 'Registrasi Seller Berhasil' });
     } catch (error) {
         next(error); 
     }
@@ -120,6 +185,8 @@ app.post('/sellerLogin', async (req, res, next) => {
                 id: sellerData.id,
                 email: sellerData.email,
                 name: sellerData.name,
+                provinceId: sellerData.provinceId,
+                cityId: sellerData.cityId,
                 address: sellerData.address,
                 latitude: sellerData.latitude,
                 longitude: sellerData.longitude
@@ -218,10 +285,103 @@ app.put('/updateFood', async (req, res, next) => {
         await foodModel.updateFood(foodData);
         res.status(201).json({ 
             status: 200,
-            message: 'Berhasil Menghapus Data Makanan'
+            message: 'Berhasil meperbaharui Data Makanan'
          });
     } catch (error) {
         next(error); 
+    }
+});
+
+
+// ORDER FOOD
+app.post('/orderFood', async (req, res, next) => {
+    try {
+        const dataOrder = {
+            foodId: req.body.foodId,
+            sellerId: req.body.sellerId,
+            userId: req.body.userId,
+            amount: req.body.amount,
+            token: req.headers.authorization
+        };
+
+        if (!dataOrder.foodId || !dataOrder.userId || !dataOrder.amount || !dataOrder.sellerId  ) {
+            throw new Error('Semua Kolom Wajib Di Isi!!!');
+        }
+        
+        await orderModel.createNewOrder(dataOrder);
+        res.status(201).json({ message: 'Order Food Berhasil Sedang Menunggu Konfirmasi Toko' });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+app.get('/cityAll', async (req, res, next) => {
+    try {
+
+        const [cities] = await cityModel.getAllCities();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Kota',
+            cities: cities
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/cityById', express.json(), async (req, res, next) => {
+    try {
+        const id = req.query.id; 
+        const city = await cityModel.getCityById(id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Kota Berdasarkan Provinsi',
+            city: city
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/cityByProvinceId', express.json(), async (req, res, next) => {
+    try {
+        const provinceId = req.query.provinceId; 
+        const cities = await cityModel.getCityByProvinceId(provinceId);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Kota Berdasarkan Provinsi',
+            cities: cities
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/provinceAll', async (req, res, next) => {
+    try {
+
+        const [provincies] = await provinceModel.getAllProvincies();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Provinsi',
+            provincies: provincies
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/provinceById', express.json(), async (req, res, next) => {
+    try {
+        const id = req.query.id; 
+        const province = await provinceModel.getProvinceById(id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Data Provinsi Berdasarkan Id',
+            province: province
+        });
+    } catch (error) {
+        next(error);
     }
 });
 

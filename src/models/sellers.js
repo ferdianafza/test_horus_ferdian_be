@@ -14,13 +14,15 @@ const getAllSellers = () => {
 
 
 const createNewSeller = async (body) => {
-    const { email, password, name, address, latitude, longitude } = body;
+    const { email, password, name,provinceId, cityId, address, latitude, longitude } = body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
     const sellerId = nanoid(16);
+    const createdAt = new Date().toISOString();
+    const updatedAt = createdAt;
 
-    const SQLQuery = `INSERT INTO seller (id, email, password, name, address, latitude, longitude) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?)`;
-    const values = [sellerId, email, hashedPassword, name, address, latitude, longitude];
+    const SQLQuery = `INSERT INTO seller (id, email, password, name, provinceId, cityId, address, latitude, longitude, createdAt, updatedAt) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? , ? , ?)`;
+    const values = [sellerId, email, hashedPassword, name,provinceId,cityId, address, latitude, longitude, createdAt, updatedAt];
 
     return dbPool.execute(SQLQuery, values);
 }
