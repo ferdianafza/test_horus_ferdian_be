@@ -2,6 +2,7 @@ const dbPool = require('../config/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
+const moment = require('moment-timezone');
 
 const saltRounds = 10;
 const jwtSecret = 'SECRET';
@@ -14,17 +15,28 @@ const getAllAdmins = () => {
 
 
 const createNewAdmin = async (body) => {
-    const { email, password, name,provinceId, cityId, address, latitude, longitude } = body;
+    const { username, email, password, confirmPassword, role, photo} = body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const adminId = nanoid(16);
-    const createdAt = new Date().toISOString();
+
+    if (body.password != body.confirmPassword) {
+        throw new Error('password dan konfirmasi password tidak sama!!!');
+    }
+
+    const checkEmailQuery = 'SELECT email FROM user WHERE email = ?';
+    const [existingUsers] = await dbPool.execute(checkEmailQuery, [email]);
+
+    if (existingUsers.length > 0) {
+        throw new Error('Email sudah digunakan!');
+    }
+    
+    const user_id = nanoid(16);
+    const createdAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     const updatedAt = createdAt;
-
-    const SQLQuery = `INSERT INTO admin (id, email, password, name, provinceId, cityId, address, latitude, longitude, createdAt, updatedAt) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ? , ? , ?)`;
-    const values = [adminId, email, hashedPassword, name,provinceId,cityId, address, latitude, longitude, createdAt, updatedAt];
-
-    return dbPool.execute(SQLQuery, values);
+    const SQLQueryUser = `INSERT INTO user (user_id, username, email, 
+                                        password, role , createdAt, updatedAt, photo ) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?)`;
+    const valuesUser = [user_id, username, email, hashedPassword, role, createdAt, updatedAt, photo];
+    dbPool.execute(SQLQueryUser, valuesUser);
 }
 
 const authenticateAdmin = async (body) => {
@@ -33,7 +45,7 @@ const authenticateAdmin = async (body) => {
     if (!body.email || !body.password) {
         throw new Error('Email dan password harus diisi');
     }
-    const SQLQuery = 'SELECT id, name, email, password FROM admin WHERE email = ?';
+    const SQLQuery = 'SELECT user_id, username, email, password, role, createdAt, updatedAt, CONCAT("/assets/", photo) AS photo FROM user WHERE email = ?';
     const [rows, _] = await dbPool.execute(SQLQuery, [body.email]);
     if (rows.length === 0) {
         throw new Error('Admin Tidak Ditemukan');
@@ -66,7 +78,7 @@ const deleteAdmin = (idAdmin) => {
 }
 
 const getAdminByEmail = async (email) => {
-    const SQLQuery = 'SELECT * FROM admin WHERE email = ?';
+    const SQLQuery = 'SELECT * FROM user WHERE email = ?';
     const [rows, _] = await dbPool.execute(SQLQuery, [email]);
 
     if (rows.length === 0) {

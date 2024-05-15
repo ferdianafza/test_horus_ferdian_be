@@ -5,6 +5,7 @@ const express = require('express');
 const usersRoutes = require('./routes/users');
 const middlewareLogRequest = require('./middleware/logs');
 const upload = require('./middleware/multer');
+const customerModel = require('./models/customers');
 const userModel = require('./models/users');
 const sellerModel = require('./models/sellers');
 const adminModel = require('./models/admins');
@@ -41,35 +42,6 @@ app.post('/usersCreate', upload.single('photo'), async (req, res, next) => {
 });
 
 
-
-app.post('/loginUser', async (req, res, next) => {
-    try {
-        const dataMasuk = {
-            email: req.body.email,
-            password: req.body.password
-        };
-
-        if (!dataMasuk.email || !dataMasuk.password) {
-            throw new Error('Email dan password harus diisi');
-        }
-        console.log(dataMasuk);
-        const token = await userModel.authenticateUser(dataMasuk);
-        const userData = await userModel.getUserByEmail(dataMasuk.email);
-
-        res.status(200).json({
-            message: 'Login berhasil',
-            token: token,
-            data: {
-                id: userData.id,
-                email: userData.email,
-                name: userData.name,
-                address: userData.address
-            }
-        });
-    } catch (error) {
-        next(error); 
-    }
-});
 
 app.post('/upload',upload.single('photo'),(req, res) => {
     res.json({
@@ -159,40 +131,6 @@ app.post('/sellerRegist', async (req, res, next) => {
         
         await sellerModel.createNewSeller(dataSeller);
         res.status(201).json({ status: '200', message: 'Registrasi Seller Berhasil' });
-    } catch (error) {
-        next(error); 
-    }
-});
-
-// Login Seller
-app.post('/sellerLogin', async (req, res, next) => {
-    try {
-        const reqDataLogin = {
-            email: req.body.email,
-            password: req.body.password
-        };
-
-        if (!reqDataLogin.email || !reqDataLogin.password) {
-            throw new Error('Email dan password harus diisi');
-        }
-        
-        const token = await sellerModel.authenticateSeller(reqDataLogin);
-        const sellerData = await sellerModel.getSellerByEmail(reqDataLogin.email);
-
-        res.status(200).json({
-            message: 'Login berhasil',
-            token: token,
-            data: {
-                id: sellerData.id,
-                email: sellerData.email,
-                name: sellerData.name,
-                provinceId: sellerData.provinceId,
-                cityId: sellerData.cityId,
-                address: sellerData.address,
-                latitude: sellerData.latitude,
-                longitude: sellerData.longitude
-            }
-        });
     } catch (error) {
         next(error); 
     }
@@ -413,8 +351,208 @@ app.post('/adminRegist', async (req, res, next) => {
     }
 });
 
+
+app.post('/createCustomer', upload.single('photo'), async (req, res, next) => {
+    try {
+        let imagePath = null;
+        if (req.file) {
+            imagePath = req.file.filename; 
+        }
+        const userCustomerData = {
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+            role: req.body.role,
+            photo: imagePath,
+
+            name: req.body.name,
+            nomorWA: req.body.nomorWA,
+            address: req.body.address,
+            city_id: req.body.city_id,
+            city_province_id: req.body.city_province_id
+
+        };
+        await customerModel.createNewCustomer(userCustomerData);
+        res.status(201).json({ 
+            status: 200,
+            message: 'Berhasil Membuat Akun Customer'
+         });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+app.post('/loginCustomer', async (req, res, next) => {
+    try {
+        const dataMasuk = {
+            email: req.body.email,
+            password: req.body.password
+        };
+
+        if (!dataMasuk.email || !dataMasuk.password) {
+            throw new Error('Email dan password harus diisi');
+        }
+        console.log(dataMasuk);
+        const token = await customerModel.authenticateCustomer(dataMasuk);
+        const customerData = await customerModel.getCustomerByEmail(dataMasuk.email);
+
+        res.status(200).json({
+            message: 'Login berhasil',
+            token: token,
+            data: {
+                id_cust: customerData.id_cust,
+                customer_name: customerData.customer_name,
+                nomorWA: customerData.nomorWA,
+                address: customerData.address,
+                city_id: customerData.city_id,
+                city_province_id: customerData.city_province_id,
+                user_id: customerData.user_id,
+                username: customerData.username,
+                email: customerData.email,
+                role: customerData.role,
+                createdAt: customerData.createdAt,
+                updatedAt: customerData.updatedAt,
+                photo: sellerData.photo
+            }
+        });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+
+
+app.get('/getAllCustomers', async (req, res, next) => {
+    try {
+
+        const [customers] = await customerModel.getAllCustomers();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Customer',
+            customers: customers
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+
+
+app.post('/createSeller', upload.single('photo'), async (req, res, next) => {
+    try {
+        let imagePath = null;
+        if (req.file) {
+            imagePath = req.file.filename; 
+        }
+        const userSellerData = {
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+            role: req.body.role,
+            photo: imagePath,
+
+            name: req.body.name,
+            nomorWA: req.body.nomorWA,
+            desc: req.body.desc,
+            address: req.body.address,
+            city_id: req.body.city_id,
+            city_province_id: req.body.city_province_id
+
+        };
+        await sellerModel.createNewSeller(userSellerData);
+        res.status(201).json({ 
+            status: 200,
+            message: 'Berhasil Membuat Akun Seller'
+         });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+// Login Seller
+app.post('/loginSeller', async (req, res, next) => {
+    try {
+        const reqDataLogin = {
+            email: req.body.email,
+            password: req.body.password
+        };
+
+        if (!reqDataLogin.email || !reqDataLogin.password) {
+            throw new Error('Email dan password harus diisi');
+        }
+        
+        const token = await sellerModel.authenticateSeller(reqDataLogin);
+        const sellerData = await sellerModel.getSellerByEmail(reqDataLogin.email);
+
+        res.status(200).json({
+            message: 'Login berhasil',
+            token: token,
+            data: {
+                id_seller: sellerData.id_seller,
+                name: sellerData.name,
+                desc: sellerData.desc,
+                nomorWA: sellerData.nomorWA,
+                address: sellerData.address,
+                city_id: sellerData.city_id,
+                city_province_id: sellerData.city_province_id,
+                user_id: sellerData.user_id,
+                username: sellerData.username,
+                email: sellerData.email,
+                role: sellerData.role,
+                createdAt: sellerData.createdAt,
+                updatedAt: sellerData.updatedAt,
+                photo: sellerData.photo
+            }
+        });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+app.get('/getAllSellers', async (req, res, next) => {
+    try {
+
+        const [customers] = await sellerModel.getAllSellers();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Seller',
+            customers: customers
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.post('/createAdmin', upload.single('photo'), async (req, res, next) => {
+    try {
+        let imagePath = null;
+        if (req.file) {
+            imagePath = req.file.filename; 
+        }
+        const userDataAdmin = {
+            username: req.body.username,
+            email: req.body.email,
+            password: req.body.password,
+            confirmPassword: req.body.confirmPassword,
+            role: req.body.role,
+            photo: imagePath,
+
+        };
+        await adminModel.createNewAdmin(userDataAdmin);
+        res.status(201).json({ 
+            status: 200,
+            message: 'Berhasil Membuat Akun Admin'
+         });
+    } catch (error) {
+        next(error); 
+    }
+});
+
 // Login Admin
-app.post('/adminLogin', async (req, res, next) => {
+app.post('/loginAdmin', async (req, res, next) => {
     try {
         const reqDataLogin = {
             email: req.body.email,
@@ -432,23 +570,20 @@ app.post('/adminLogin', async (req, res, next) => {
             message: 'Login berhasil',
             token: token,
             data: {
-                id: adminData.id,
+                user_id: adminData.user_id,
+                username: adminData.username,
                 email: adminData.email,
-                name: adminData.name,
-                provinceId: adminData.provinceId,
-                cityId: adminData.cityId,
-                address: adminData.address,
-                latitude: adminData.latitude,
-                longitude: adminData.longitude
+                password: adminData.password,
+                role: adminData.role,
+                createdAt: adminData.createdAt,
+                updatedAt: adminData.updatedAt,
+                photo: adminData.photo
             }
         });
     } catch (error) {
         next(error); 
     }
 });
-
-
-
 
 
 

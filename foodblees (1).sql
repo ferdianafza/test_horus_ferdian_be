@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 10, 2024 at 05:45 AM
+-- Generation Time: May 15, 2024 at 10:43 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -40,6 +40,13 @@ CREATE TABLE `admin` (
   `createdAt` varchar(150) NOT NULL,
   `updatedAt` varchar(150) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `admin`
+--
+
+INSERT INTO `admin` (`id`, `email`, `password`, `name`, `provinceId`, `cityId`, `address`, `latitude`, `longitude`, `createdAt`, `updatedAt`) VALUES
+('vCWeHZbeXlSX05K8', 'admin@gmail.com', '$2b$10$1sczIYe3KFRszpresEAYVuDpDv7q6ZCO2MFxZhvakbo1hkvAPLYiu', 'admin', 1, 1, 'aceh kota', '39', '29', '2024-05-10T06:01:08.193Z', '2024-05-10T06:01:08.193Z');
 
 -- --------------------------------------------------------
 
@@ -164,6 +171,30 @@ INSERT INTO `city` (`id`, `provinceId`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `customer`
+--
+
+CREATE TABLE `customer` (
+  `id_cust` varchar(30) NOT NULL,
+  `name` varchar(45) NOT NULL,
+  `nomorWA` varchar(45) NOT NULL,
+  `address` varchar(50) NOT NULL,
+  `city_id` int(10) NOT NULL,
+  `city_province_id` int(10) NOT NULL,
+  `user_user_id` varchar(40) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `customer`
+--
+
+INSERT INTO `customer` (`id_cust`, `name`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
+('X6Yi6FpPDUPQ7yBP', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'Pf3Cfof-i7s03HDY'),
+('Hz_ZwUmRO959iYj1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'lzxA8-2rdDWjNmhT');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `food`
 --
 
@@ -183,7 +214,8 @@ CREATE TABLE `food` (
 --
 
 INSERT INTO `food` (`id`, `sellerId`, `name`, `price`, `stock`, `photo`, `createdAt`, `updatedAt`) VALUES
-('eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'uhuy', 100000, -1, '1714291968229-Screenshot_6.png', '', '');
+('eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'uhuy', 100000, -1, '1714291968229-Screenshot_6.png', '', ''),
+('4s1NhE46dEPCRdqt', 'JTb5jDVDRQIe9ewr', 'Teh Tarik', 10000, 5, '1715330962103-classdiagramfoodbles.png', '2024-05-10T08:49:22.194Z', '2024-05-10T08:49:22.194Z');
 
 -- --------------------------------------------------------
 
@@ -277,29 +309,22 @@ INSERT INTO `province` (`id`, `name`) VALUES
 --
 
 CREATE TABLE `seller` (
-  `id` varchar(100) NOT NULL,
-  `email` varchar(150) NOT NULL,
-  `password` varchar(200) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `provinceId` int(20) NOT NULL,
-  `cityId` int(20) NOT NULL,
-  `address` varchar(200) NOT NULL,
-  `latitude` varchar(50) NOT NULL,
-  `longitude` varchar(50) NOT NULL,
-  `createdAt` varchar(100) NOT NULL,
-  `updatedAt` varchar(100) NOT NULL
+  `id_seller` varchar(100) NOT NULL,
+  `name` varchar(50) NOT NULL,
+  `desc` varchar(50) NOT NULL,
+  `nomorWA` varchar(50) NOT NULL,
+  `address` varchar(50) NOT NULL,
+  `city_id` int(10) NOT NULL,
+  `city_province_id` int(10) NOT NULL,
+  `user_user_id` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `seller`
 --
 
-INSERT INTO `seller` (`id`, `email`, `password`, `name`, `provinceId`, `cityId`, `address`, `latitude`, `longitude`, `createdAt`, `updatedAt`) VALUES
-('cy2qDVlR1TcmUW7h', 'akun@gmail.com', '$2b$10$Ndza/3byI9Nrx2OR3pt/y.dnyVXjKzvh.XLokD9Z3m4mCGz2Nvm6q', 'toko kue daffa', 0, 0, 'bandung', '20', '20', '', ''),
-('HxV9zBZqtjDH63jA', 'akun2@gmail.com', '$2b$10$WJSZ7Emv4Vbb2kNG2Em5besl8K7FwUuW6YkgECuzjYWl2x98GhGd2', 'toko kue cicak', 0, 0, 'bandung', '20', '20', '', ''),
-('mXzLJ85yTx_53R_6', 'afsa@gmail.com', '$2b$10$gZ/VrVu/239IkREJBxwt5eB6y9FMOlfHYowqu41QJeNj59xgEXnW6', 'afsa', 0, 0, 'bandung', '20', '20', '', ''),
-('JTb5jDVDRQIe9ewr', 'sellerafsa@gmail.com', '$2b$10$1nW8yonbKfWMr5VSCZTF/epJGK8KojJI6ULnWsOaNtMFB.bIF.tRe', 'afsa', 1, 1, 'aceh kota', '20', '30', '2024-05-10T02:41:44.566Z', '2024-05-10T02:41:44.566Z'),
-('NCLU7sNp3vPYtzqq', 'sellerafsa2@gmail.com', '$2b$10$fO5Y.CGFeWmKts3Td.1SoeYB7gaeezynCfzsn/rUguh/ZadhZQeOm', 'afsa', 1, 1, 'aceh kota', '20', '30', '2024-05-10T02:43:12.046Z', '2024-05-10T02:43:12.046Z');
+INSERT INTO `seller` (`id_seller`, `name`, `desc`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
+('h7tj6Qyf8UPtgafJ', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '1d_yWGuBE9rG9moU');
 
 -- --------------------------------------------------------
 
@@ -308,28 +333,25 @@ INSERT INTO `seller` (`id`, `email`, `password`, `name`, `provinceId`, `cityId`,
 --
 
 CREATE TABLE `user` (
-  `id` varchar(50) NOT NULL,
+  `user_id` varchar(50) NOT NULL,
+  `username` varchar(50) NOT NULL,
   `email` varchar(100) NOT NULL,
   `password` varchar(200) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `provinceId` int(20) NOT NULL,
-  `cityId` int(20) NOT NULL,
-  `address` varchar(100) NOT NULL,
-  `latitude` varchar(100) NOT NULL,
-  `longitude` varchar(100) NOT NULL,
+  `role` enum('customer','seller','admin') NOT NULL,
   `createdAt` varchar(100) NOT NULL,
-  `updatedAt` varchar(100) NOT NULL
+  `updatedAt` varchar(100) NOT NULL,
+  `photo` varchar(50) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
 -- Dumping data for table `user`
 --
 
-INSERT INTO `user` (`id`, `email`, `password`, `name`, `provinceId`, `cityId`, `address`, `latitude`, `longitude`, `createdAt`, `updatedAt`) VALUES
-('W4aPZIcT5xW8Uulk', 'user@gmail.com', '$2b$10$fjsQn61D2IrEggIYgaY/reTcOkr0H0.W78YfgEMCQvbSkvGYjg/OS', 'user', 0, 0, 'jakarta', '20', '30', '', ''),
-('MrprcBRlY7lfJo7x', 'user2@gmail.com', '$2b$10$N../QIr2.bTWE3zEfTLW0uXNmyQdkbvFJVGfPDZI9K3TNEzV4zKcS', 'user', 0, 0, 'jakarta', '20', '30', '2024-04-28T15:12:04.700Z', '2024-04-28T15:12:04.700Z'),
-('_vNatB6VGkUq8wTD', 'kornel@gmail.com', '$2b$10$tILCTuHEFRG3Psrt3lehZeMfbNl0XyWRILXUEgQ6D8uVVHvaIQV9.', 'kornel', 18, 15, 'Bandung', '30', '20', '2024-05-10T02:29:18.611Z', '2024-05-10T02:29:18.611Z'),
-('P8uFehX3ySQbnB1A', 'kornel3@gmail.com', '$2b$10$lblRyXz2QiAWdqDKMmZTR.tKfUSmDN2cA1XkKfjgE3wBXk2nHYspW', 'kornel', 18, 15, 'Bandung', '30', '20', '2024-05-10T02:36:24.389Z', '2024-05-10T02:36:24.389Z');
+INSERT INTO `user` (`user_id`, `username`, `email`, `password`, `role`, `createdAt`, `updatedAt`, `photo`) VALUES
+('Pf3Cfof-i7s03HDY', 'afsa', 'afsa@gmail.com', '$2b$10$yHWOENTXbR63ppRd1uFA1.46R9waqVSB2NLTkRdaP7feQmXJdVdKq', 'customer', '2024-05-15T07:32:57.418Z', '2024-05-15T07:32:57.418Z', '1715758377254-Screenshot_6.png'),
+('lzxA8-2rdDWjNmhT', 'afsa', 'afsa2@gmail.com', '$2b$10$1kAvc0yMofbAjA328Jm.Weh0biJvCK.MWGG.D86wVvnk7rKxyrv/q', 'customer', '2024-05-15 14:42:52', '2024-05-15 14:42:52', '1715758972321-Screenshot_6.png'),
+('1d_yWGuBE9rG9moU', 'kornel', 'kornel@gmail.com', '$2b$10$Z5dscw18pxucByP1ll1j7.gFeJPyoc411.aVfG4QmmGWd2IdIeKU6', 'seller', '2024-05-15 15:03:41', '2024-05-15 15:03:41', '1715760221028-mcqueen.jpeg'),
+('1ZZgaip1rA4lNgjb', 'admin', 'admin@gmail.com', '$2b$10$bKyBAvlyDyztKjsvoZsSdOcDzBRVnYlX2uVyXcs5PIvuALAKC8ZCq', 'admin', '2024-05-15 15:11:11', '2024-05-15 15:11:11', '1715760670926-mcqueen.jpeg');
 
 --
 -- Indexes for dumped tables
