@@ -33,7 +33,7 @@ const authenticateUser = async (body) => {
     if (!body.email || !body.password) {
         throw new Error('Email dan password harus diisi');
     }
-    const SQLQuery = 'SELECT id, name, email, password FROM user WHERE email = ?';
+    const SQLQuery = 'SELECT user_id, username, email, password, role FROM user WHERE email = ?';
     const [rows, _] = await dbPool.execute(SQLQuery, [body.email]);
     if (rows.length === 0) {
         throw new Error('User Tidak Ditemukan');
@@ -75,6 +75,93 @@ const getUserByEmail = async (email) => {
 
     return rows[0];
 }
+const checkRoleUserByEmail = async (email) => {
+    const SQLQuery = 'SELECT user_id, username, email, password, role FROM user WHERE email = ?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [email]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
+
+const getCustomerDataById = async (user_id) => {
+    const SQLQuery = `
+        SELECT 
+            c.id_cust, 
+            c.name AS customer_name, 
+            c.nomorWA, 
+            c.address, 
+            c.city_id, 
+            c.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.password, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            CONCAT("/assets/", u.photo) AS photo
+        FROM 
+            customer c
+        INNER JOIN 
+            user u ON c.user_user_id = u.user_id
+        WHERE 
+            u.user_id = ?`;
+    const [rows, _] = await dbPool.execute(SQLQuery, [user_id]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
+
+const getSellerDataById = async (user_id) => {
+    const SQLQuery = `
+        SELECT 
+            s.id_seller, 
+            s.name, 
+            s.desc,
+            s.nomorWA, 
+            s.address, 
+            s.city_id, 
+            s.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.password, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            CONCAT("/assets/", u.photo) AS photo
+        FROM 
+            seller s 
+        INNER JOIN 
+            user u ON s.user_user_id = u.user_id
+        WHERE 
+            u.user_id = ?`;
+    const [rows, _] = await dbPool.execute(SQLQuery, [user_id]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
+
+
+const getAdminDataById = async (user_id) => {
+    const SQLQuery = 'SELECT user_id, username, email, password, role, createdAt, updatedAt, CONCAT("/assets/", photo) AS photo FROM user WHERE user_id = ?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [user_id]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
 
 module.exports = {
     getAllUsers,
@@ -83,4 +170,8 @@ module.exports = {
     deleteUser,
     getUserByEmail,
     authenticateUser,
+    checkRoleUserByEmail,
+    getCustomerDataById,
+    getSellerDataById,
+    getAdminDataById
 }

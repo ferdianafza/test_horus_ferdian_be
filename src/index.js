@@ -661,6 +661,115 @@ app.post('/loginAdmin', async (req, res, next) => {
     }
 });
 
+app.post('/login', async (req, res, next) => {
+    try {
+        const reqDataLogin = {
+            email: req.body.email,
+            password: req.body.password
+        };
+
+        if (!reqDataLogin.email || !reqDataLogin.password) {
+            throw new Error('Email dan password harus diisi');
+        }
+        
+        const token = await userModel.authenticateUser(reqDataLogin);
+        
+        let userData;
+        const dataUser = await userModel.checkRoleUserByEmail(reqDataLogin.email);;
+        let role = dataUser.role;
+
+        // Mengecek peran pengguna
+        switch (role) {
+            case 'customer':
+                const customerUserData = await userModel.getCustomerDataById(dataUser.user_id);
+                if (!customerUserData) {
+                    throw new Error('Data customer tidak ditemukan');
+                }
+                userData = customerUserData;
+                break;
+            case 'seller':
+                const sellerUserData = await userModel.getSellerDataById(dataUser.user_id);
+                if (!sellerUserData) {
+                    throw new Error('Data seller tidak ditemukan');
+                }
+                userData = sellerUserData;
+                break;
+            case 'admin':
+                const adminUserData = await userModel.getAdminDataById(dataUser.user_id);
+                if (!adminUserData) {
+                    throw new Error('Data admin tidak ditemukan');
+                }
+                userData = adminUserData;
+                break;
+            default:
+                throw new Error('Peran pengguna tidak valid');
+        }
+
+        // Mengembalikan data sesuai dengan peran pengguna
+        let responseData;
+        switch (role) {
+            case 'customer':
+                responseData = {
+                    id_cust: userData.id_cust,
+                    customer_name: userData.customer_name,
+                    nomorWA: userData.nomorWA,
+                    address: userData.address,
+                    city_id: userData.city_id,
+                    city_province_id: userData.city_province_id,
+                    user_id: userData.user_id,
+                    username: userData.username,
+                    email: userData.email,
+                    role: userData.role,
+                    createdAt: userData.createdAt,
+                    updatedAt: userData.updatedAt,
+                    photo: userData.photo
+                };
+                break;
+            case 'seller':
+                responseData = {
+                    id_seller: userData.id_seller,
+                    name: userData.name,
+                    desc: userData.desc,
+                    nomorWA: userData.nomorWA,
+                    address: userData.address,
+                    city_id: userData.city_id,
+                    city_province_id: userData.city_province_id,
+                    user_id: userData.user_id,
+                    username: userData.username,
+                    email: userData.email,
+                    role: userData.role,
+                    createdAt: userData.createdAt,
+                    updatedAt: userData.updatedAt,
+                    photo: userData.photo
+                };
+                break;
+            case 'admin':
+                responseData = {
+                    user_id: userData.user_id,
+                    username: userData.username,
+                    email: userData.email,
+                    password: userData.password, // Ini mungkin perlu disesuaikan, mungkin tidak perlu dikembalikan
+                    role: userData.role,
+                    createdAt: userData.createdAt,
+                    updatedAt: userData.updatedAt,
+                    photo: userData.photo
+                };
+                break;
+            default:
+                throw new Error('Peran pengguna tidak valid');
+        }
+
+        res.status(200).json({
+            message: 'Login berhasil',
+            token: token,
+            data: responseData
+        });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+
 
 
 
