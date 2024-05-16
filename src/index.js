@@ -4,6 +4,9 @@ const PORT = process.env.PORT || 5000;
 const express = require('express');
 const usersRoutes = require('./routes/users');
 const middlewareLogRequest = require('./middleware/logs');
+const path = require('path');
+const fs = require('fs');
+const { nanoid } = require('nanoid');
 const upload = require('./middleware/multer');
 const customerModel = require('./models/customers');
 const userModel = require('./models/users');
@@ -25,7 +28,7 @@ app.post('/usersCreate', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
         if (req.file) {
-            imagePath = req.file.filename; // Ambil nama file dari multer
+            imagePath = req.file.filename; 
         }
         const userData = {
             name: req.body.name,
@@ -42,98 +45,10 @@ app.post('/usersCreate', upload.single('photo'), async (req, res, next) => {
 });
 
 
-
 app.post('/upload',upload.single('photo'),(req, res) => {
     res.json({
         message: 'Upload berhasil'
-    })
-})
-
-//USER ROUTE
-app.post('/userRegist', async (req, res, next) => {
-    try {
-        // const createdAt = new Date().toISOString().slice(0, 19).replace('T', ' ');
-        // const updatedAt = createdAt;
-        const userData = {
-            email: req.body.email,
-            password: req.body.password,
-            name: req.body.name,
-            provinceId: req.body.provinceId,
-            cityId: req.body.cityId,
-            address: req.body.address,
-            latitude: req.body.latitude,
-            longitude: req.body.longitude
-        };
-        console.log(userData);
-        if (!userData.email || !userData.password || !userData.name || !userData.address || !userData.latitude || !userData.longitude) {
-            throw new Error('Semua Kolom Wajib Di Isi!!!');
-        }
-        
-        await userModel.createNewUser(userData);
-        res.status(201).json({ status: '200',
-        message: 'Registrasi User Berhasil' });
-    } catch (error) {
-        next(error); 
-    }
-});
-
-app.post('/userLogin', async (req, res, next) => {
-    try {
-        const reqDataLogin = {
-            email: req.body.email,
-            password: req.body.password
-        };
-
-        if (!reqDataLogin.email || !reqDataLogin.password) {
-            throw new Error('Email dan password harus diisi');
-        }
-        
-        const token = await userModel.authenticateUser(reqDataLogin);
-        const userData = await userModel.getUserByEmail(reqDataLogin.email);
-
-        res.status(200).json({
-            message: 'Login berhasil',
-            token: token,
-            data: {
-                id: userData.id,
-                email: userData.email,
-                name: userData.name,
-                provinceId: userData.provinceId,
-                cityId: userData.cityId,
-                address: userData.address,
-                latitude: userData.latitude,
-                longitude: userData.longitude
-            }
-        });
-    } catch (error) {
-        next(error); 
-    }
-});
-
-// SELERS ROUTE
-// Registrasi Seller
-app.post('/sellerRegist', async (req, res, next) => {
-    try {
-        const dataSeller = {
-            email: req.body.email,
-            password: req.body.password,
-            name: req.body.name,
-            provinceId: req.body.provinceId,
-            cityId: req.body.cityId,
-            address: req.body.address,
-            latitude: req.body.latitude,
-            longitude: req.body.longitude
-        };
-
-        if (!dataSeller.email || !dataSeller.password || !dataSeller.name || !dataSeller.address || !dataSeller.latitude || !dataSeller.longitude) {
-            throw new Error('Semua Kolom Wajib Di Isi!!!');
-        }
-        
-        await sellerModel.createNewSeller(dataSeller);
-        res.status(201).json({ status: '200', message: 'Registrasi Seller Berhasil' });
-    } catch (error) {
-        next(error); 
-    }
+    });
 });
 
 
@@ -144,13 +59,20 @@ app.post('/createFood', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
         if (req.file) {
-            imagePath = req.file.filename; 
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+            fs.renameSync(req.file.path, newFilePath);
+            imagePath = newFileName;
         }
         const foodData = {
-            sellerId: req.body.sellerId,
+            seller_id: req.body.seller_id,
+            seller_city_id: req.body.seller_city_id,
             name: req.body.name,
             price: req.body.price,
             stock: req.body.stock,
+            description: req.body.description,
+            expireDate: req.body.expireDate,
             photo: imagePath,
             token: req.headers.authorization 
         };
@@ -178,7 +100,34 @@ app.get('/getAllFoods', async (req, res, next) => {
         next(error);
     }
 });
+// ambil semua daya makanan status ready(true)
+app.get('/getReadyFoods', async (req, res, next) => {
+    try {
 
+        const [foods] = await foodModel.getReadyFoods();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Makanan Yang Ready',
+            foods: foods
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+// ambil semua daya makanan status unready(false)
+app.get('/getUnReadyFoods', async (req, res, next) => {
+    try {
+
+        const [foods] = await foodModel.getUnReadyFoods();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Makanan Yang Tidak Tersedia',
+            foods: foods
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 // ambil data makanan berdasarkan Id
 app.get('/getFoodById', async (req, res, next) => {
     try {
@@ -193,12 +142,12 @@ app.get('/getFoodById', async (req, res, next) => {
         next(error);
     }
 });
-
+// hapus makanan
 app.delete('/deleteFood', async (req, res, next) => {
     try {
         const foodData = {
             id: req.body.id,
-            sellerId: req.body.sellerId,
+            seller_id: req.body.seller_id,
             token: req.headers.authorization 
         };
         await foodModel.deleteFood(foodData);
@@ -210,24 +159,33 @@ app.delete('/deleteFood', async (req, res, next) => {
         next(error); 
     }
 });
-
-app.put('/updateFood', async (req, res, next) => {
+// update makanan
+app.put('/updateFood', upload.single('photo'), async (req, res, next) => {
     try {
+        let imagePath = null;
+        if (req.file) {
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+            fs.renameSync(req.file.path, newFilePath);
+            imagePath = newFileName;
+        }
         const foodData = {
             id: req.body.id,
-            sellerId: req.body.sellerId,
-            name: req.body.name,
+            seller_id: req.body.seller_id,
+            status: req.body.status,
+            description: req.body.description,
+            expireDate: req.body.expireDate,
+            token: req.headers.authorization,
             price: req.body.price,
             stock: req.body.stock,
-            token: req.headers.authorization 
+            name: req.body.name,
+            photo: imagePath
         };
-        await foodModel.updateFood(foodData);
-        res.status(201).json({ 
-            status: 200,
-            message: 'Berhasil meperbaharui Data Makanan'
-         });
+        const result = await foodModel.updateFood(foodData);
+        res.status(201).json(result);
     } catch (error) {
-        next(error); 
+        next(error);
     }
 });
 
@@ -236,14 +194,14 @@ app.put('/updateFood', async (req, res, next) => {
 app.post('/orderFood', async (req, res, next) => {
     try {
         const dataOrder = {
-            foodId: req.body.foodId,
-            sellerId: req.body.sellerId,
-            userId: req.body.userId,
+            food_id: req.body.food_id,
+            seller_id: req.body.seller_id,
+            customer_id: req.body.customer_id,
             amount: req.body.amount,
             token: req.headers.authorization
         };
 
-        if (!dataOrder.foodId || !dataOrder.userId || !dataOrder.amount || !dataOrder.sellerId  ) {
+        if (!dataOrder.food_id || !dataOrder.customer_id || !dataOrder.amount || !dataOrder.seller_id  ) {
             throw new Error('Semua Kolom Wajib Di Isi!!!');
         }
         
@@ -253,7 +211,108 @@ app.post('/orderFood', async (req, res, next) => {
         next(error); 
     }
 });
+// ambil semua data orders
+app.get('/getAllOrders', async (req, res, next) => {
+    try {
 
+        const [orders] = await orderModel.getAllOrders();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Orders',
+            orders: orders
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+// ambil data order berdasarkan seller id
+app.get('/getOrdersBySellerId', express.json(), async (req, res, next) => {
+    try {
+        const seller_id = req.body.seller_id; 
+        const [orders] = await orderModel.getOrdersBySellerId(seller_id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Orders Berdasarkan Seller Id',
+            orders: orders
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+// ambil data order berdasarkan customer id
+app.get('/getOrdersByCustomerId', express.json(), async (req, res, next) => {
+    try {
+        const customer_id = req.body.customer_id; 
+        const [orders] = await orderModel.getOrdersByCustomerId(customer_id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Orders Berdasarkan Customer Id ',
+            orders: orders
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+// ambil data order berdasarkan food id
+app.get('/getOrdersByFoodId', express.json(), async (req, res, next) => {
+    try {
+        const food_id = req.body.food_id; 
+        const [orders] = await orderModel.getOrdersByFoodId(food_id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Orders Berdasarkan Food Id ',
+            orders: orders
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+// ambil data order berdasarkan order id
+app.get('/getOrdersByOrderId', express.json(), async (req, res, next) => {
+    try {
+        const order_id = req.body.order_id; 
+        const [orders] = await orderModel.getOrdersByOrderId(order_id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Orders Berdasarkan Order Id ',
+            orders: orders
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/checkNewOrder', express.json(), async (req, res, next) => {
+    try {
+        const seller_id = req.body.seller_id; 
+        const [orders] = await orderModel.checkNewOrder(seller_id);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Order Baru masuk ',
+            orders: orders
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.put('/updateOrderToDiproses', express.json(), async (req, res, next) => {
+    try {
+        const updateData = {
+            order_id: req.body.order_id,
+            seller_id: req.body.seller_id,
+            token: req.headers.authorization,
+        };
+        const result = await orderModel.updateOrderToDiproses(updateData);
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+
+// ambil semua data city
 app.get('/cityAll', async (req, res, next) => {
     try {
 
@@ -267,7 +326,7 @@ app.get('/cityAll', async (req, res, next) => {
         next(error);
     }
 });
-
+// ambil data city berdasarkan id
 app.get('/cityById', express.json(), async (req, res, next) => {
     try {
         const id = req.query.id; 
@@ -281,7 +340,7 @@ app.get('/cityById', express.json(), async (req, res, next) => {
         next(error);
     }
 });
-
+// ambil data city berdasarkan province id
 app.get('/cityByProvinceId', express.json(), async (req, res, next) => {
     try {
         const provinceId = req.query.provinceId; 
@@ -295,7 +354,7 @@ app.get('/cityByProvinceId', express.json(), async (req, res, next) => {
         next(error);
     }
 });
-
+// ambil semua data province
 app.get('/provinceAll', async (req, res, next) => {
     try {
 
@@ -309,7 +368,7 @@ app.get('/provinceAll', async (req, res, next) => {
         next(error);
     }
 });
-
+// ambil data province berdasarkan id
 app.get('/provinceById', express.json(), async (req, res, next) => {
     try {
         const id = req.query.id; 
@@ -351,12 +410,19 @@ app.post('/adminRegist', async (req, res, next) => {
     }
 });
 
-
+// CUSTOMER
+// buat akun customer
 app.post('/createCustomer', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
         if (req.file) {
-            imagePath = req.file.filename; 
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+            fs.renameSync(req.file.path, newFilePath);
+
+            imagePath = newFileName;
+            // imagePath = req.file.filename; 
         }
         const userCustomerData = {
             username: req.body.username,
@@ -382,7 +448,7 @@ app.post('/createCustomer', upload.single('photo'), async (req, res, next) => {
         next(error); 
     }
 });
-
+// login akun customer
 app.post('/loginCustomer', async (req, res, next) => {
     try {
         const dataMasuk = {
@@ -413,16 +479,14 @@ app.post('/loginCustomer', async (req, res, next) => {
                 role: customerData.role,
                 createdAt: customerData.createdAt,
                 updatedAt: customerData.updatedAt,
-                photo: sellerData.photo
+                photo: customerData.photo
             }
         });
     } catch (error) {
         next(error); 
     }
 });
-
-
-
+// ambil semua data customers
 app.get('/getAllCustomers', async (req, res, next) => {
     try {
 
@@ -438,13 +502,19 @@ app.get('/getAllCustomers', async (req, res, next) => {
 });
 
 
-
-
+// SELLER
+// buat akun seller
 app.post('/createSeller', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
         if (req.file) {
-            imagePath = req.file.filename; 
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+            fs.renameSync(req.file.path, newFilePath);
+
+            imagePath = newFileName;
+            // imagePath = req.file.filename; 
         }
         const userSellerData = {
             username: req.body.username,
@@ -471,7 +541,6 @@ app.post('/createSeller', upload.single('photo'), async (req, res, next) => {
         next(error); 
     }
 });
-
 // Login Seller
 app.post('/loginSeller', async (req, res, next) => {
     try {
@@ -511,7 +580,7 @@ app.post('/loginSeller', async (req, res, next) => {
         next(error); 
     }
 });
-
+//  ambil semua data seller
 app.get('/getAllSellers', async (req, res, next) => {
     try {
 
@@ -526,11 +595,19 @@ app.get('/getAllSellers', async (req, res, next) => {
     }
 });
 
+// ADMIN
+// buat akun admin
 app.post('/createAdmin', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
         if (req.file) {
-            imagePath = req.file.filename; 
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+            fs.renameSync(req.file.path, newFilePath);
+
+            imagePath = newFileName;
+            // imagePath = req.file.filename; 
         }
         const userDataAdmin = {
             username: req.body.username,
@@ -550,7 +627,6 @@ app.post('/createAdmin', upload.single('photo'), async (req, res, next) => {
         next(error); 
     }
 });
-
 // Login Admin
 app.post('/loginAdmin', async (req, res, next) => {
     try {

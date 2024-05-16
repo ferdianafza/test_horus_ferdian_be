@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 15, 2024 at 10:43 AM
+-- Generation Time: May 16, 2024 at 10:42 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -190,7 +190,9 @@ CREATE TABLE `customer` (
 
 INSERT INTO `customer` (`id_cust`, `name`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
 ('X6Yi6FpPDUPQ7yBP', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'Pf3Cfof-i7s03HDY'),
-('Hz_ZwUmRO959iYj1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'lzxA8-2rdDWjNmhT');
+('Hz_ZwUmRO959iYj1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'lzxA8-2rdDWjNmhT'),
+('nFDI6M9qBawpm3O1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'A2pZ2__E3UiB4UuN'),
+('T9WnXW-KSfmk22yA', 'ferdian afza', '082127015766', 'bandung', 1, 1, '_8QBaL2dUsCORucP');
 
 -- --------------------------------------------------------
 
@@ -200,11 +202,15 @@ INSERT INTO `customer` (`id_cust`, `name`, `nomorWA`, `address`, `city_id`, `cit
 
 CREATE TABLE `food` (
   `id` varchar(100) NOT NULL,
-  `sellerId` varchar(100) NOT NULL,
+  `seller_id` varchar(100) NOT NULL,
+  `seller_city_id` int(10) NOT NULL,
   `name` varchar(150) NOT NULL,
   `price` int(25) NOT NULL,
   `stock` int(20) NOT NULL,
+  `status` tinyint(1) NOT NULL,
   `photo` varchar(250) NOT NULL,
+  `description` varchar(150) NOT NULL,
+  `expireDate` varchar(50) NOT NULL,
   `createdAt` varchar(100) NOT NULL,
   `updatedAt` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -213,40 +219,36 @@ CREATE TABLE `food` (
 -- Dumping data for table `food`
 --
 
-INSERT INTO `food` (`id`, `sellerId`, `name`, `price`, `stock`, `photo`, `createdAt`, `updatedAt`) VALUES
-('eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'uhuy', 100000, -1, '1714291968229-Screenshot_6.png', '', ''),
-('4s1NhE46dEPCRdqt', 'JTb5jDVDRQIe9ewr', 'Teh Tarik', 10000, 5, '1715330962103-classdiagramfoodbles.png', '2024-05-10T08:49:22.194Z', '2024-05-10T08:49:22.194Z');
+INSERT INTO `food` (`id`, `seller_id`, `seller_city_id`, `name`, `price`, `stock`, `status`, `photo`, `description`, `expireDate`, `createdAt`, `updatedAt`) VALUES
+('a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 1, 'kuah soto', 5000, 5, 1, '1715778679740-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '2024-05-15 20:11:19', '2024-05-15 20:11:19'),
+('WidTuFbUUDb-jTnb', 'ug7M7mFqhagndXeN', 1, 'Donat Madu', 3000, 10, 1, '1715778734162-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '2024-05-15 20:12:14', '2024-05-15 20:12:14'),
+('Q0zNKIjkw9ES5zsu', 'ug7M7mFqhagndXeN', 1, 'donat madu enak', 50000, 0, 0, 'Sj0e4sGpgs9Y1jge.jpeg', 'enak bos', '23.20 15/05/2024', '2024-05-15 20:26:39', '2024-05-15 21:39:16'),
+('nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 1, 'Donat Madu susu', 3000, 9, 1, 'TyZ_lVxgVA-Bq8n5.png', 'kauh soto enak', '23.00 15/05/2024', '2024-05-15 22:33:57', '2024-05-15 22:33:57');
 
 -- --------------------------------------------------------
 
 --
--- Table structure for table `orderfood`
+-- Table structure for table `orders`
 --
 
-CREATE TABLE `orderfood` (
-  `id` int(11) NOT NULL,
-  `foodId` varchar(100) NOT NULL,
-  `sellerId` varchar(150) NOT NULL,
-  `userId` varchar(100) NOT NULL,
+CREATE TABLE `orders` (
+  `order_id` varchar(20) NOT NULL,
+  `food_id` varchar(100) NOT NULL,
+  `seller_id` varchar(150) NOT NULL,
+  `customer_id` varchar(100) NOT NULL,
   `amount` varchar(100) NOT NULL,
   `price` varchar(100) NOT NULL,
-  `status` varchar(100) NOT NULL,
+  `status` enum('diterima','diproses','selesai','dibatalkan') NOT NULL,
   `createdAt` varchar(100) NOT NULL,
   `updatedAt` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
--- Dumping data for table `orderfood`
+-- Dumping data for table `orders`
 --
 
-INSERT INTO `orderfood` (`id`, `foodId`, `sellerId`, `userId`, `amount`, `price`, `status`, `createdAt`, `updatedAt`) VALUES
-(0, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '2', '0', 'dipesan', '2024-04-29T06:58:06.346Z', '2024-04-29T06:58:06.346Z'),
-(0, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '2', '0', 'dipesan', '2024-04-29T06:59:42.552Z', '2024-04-29T06:59:42.552Z'),
-(0, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '2', '0', 'dipesan', '2024-04-29T07:00:22.004Z', '2024-04-29T07:00:22.004Z'),
-(0, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '2', '200000', 'dipesan', '2024-04-29T07:02:38.451Z', '2024-04-29T07:02:38.451Z'),
-(0, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '2', '200000', 'dipesan', '2024-04-29T07:15:12.641Z', '2024-04-29T07:15:12.641Z'),
-(7, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '1', '100000', 'dipesan', '2024-04-29T07:15:35.712Z', '2024-04-29T07:15:35.712Z'),
-(0, 'eKgoEeLvAB6bFMf9', 'mXzLJ85yTx_53R_6', 'MrprcBRlY7lfJo7x', '1', '100000', 'dipesan', '2024-04-29T07:17:54.260Z', '2024-04-29T07:17:54.260Z');
+INSERT INTO `orders` (`order_id`, `food_id`, `seller_id`, `customer_id`, `amount`, `price`, `status`, `createdAt`, `updatedAt`) VALUES
+('4mwDO3iEpUh5pHvi', 'nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 'nFDI6M9qBawpm3O1', '1', '3000', 'diproses', '2024-05-15 22:34:44', '2024-05-15 22:34:44');
 
 -- --------------------------------------------------------
 
@@ -324,7 +326,9 @@ CREATE TABLE `seller` (
 --
 
 INSERT INTO `seller` (`id_seller`, `name`, `desc`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
-('h7tj6Qyf8UPtgafJ', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '1d_yWGuBE9rG9moU');
+('h7tj6Qyf8UPtgafJ', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '1d_yWGuBE9rG9moU'),
+('ug7M7mFqhagndXeN', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, 'oSHPuh8329roMfFs'),
+('lRB4146MGMwNYmUO', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '8Jof8yVwdC2zPJPD');
 
 -- --------------------------------------------------------
 
@@ -351,7 +355,13 @@ INSERT INTO `user` (`user_id`, `username`, `email`, `password`, `role`, `created
 ('Pf3Cfof-i7s03HDY', 'afsa', 'afsa@gmail.com', '$2b$10$yHWOENTXbR63ppRd1uFA1.46R9waqVSB2NLTkRdaP7feQmXJdVdKq', 'customer', '2024-05-15T07:32:57.418Z', '2024-05-15T07:32:57.418Z', '1715758377254-Screenshot_6.png'),
 ('lzxA8-2rdDWjNmhT', 'afsa', 'afsa2@gmail.com', '$2b$10$1kAvc0yMofbAjA328Jm.Weh0biJvCK.MWGG.D86wVvnk7rKxyrv/q', 'customer', '2024-05-15 14:42:52', '2024-05-15 14:42:52', '1715758972321-Screenshot_6.png'),
 ('1d_yWGuBE9rG9moU', 'kornel', 'kornel@gmail.com', '$2b$10$Z5dscw18pxucByP1ll1j7.gFeJPyoc411.aVfG4QmmGWd2IdIeKU6', 'seller', '2024-05-15 15:03:41', '2024-05-15 15:03:41', '1715760221028-mcqueen.jpeg'),
-('1ZZgaip1rA4lNgjb', 'admin', 'admin@gmail.com', '$2b$10$bKyBAvlyDyztKjsvoZsSdOcDzBRVnYlX2uVyXcs5PIvuALAKC8ZCq', 'admin', '2024-05-15 15:11:11', '2024-05-15 15:11:11', '1715760670926-mcqueen.jpeg');
+('1ZZgaip1rA4lNgjb', 'admin', 'admin@gmail.com', '$2b$10$bKyBAvlyDyztKjsvoZsSdOcDzBRVnYlX2uVyXcs5PIvuALAKC8ZCq', 'admin', '2024-05-15 15:11:11', '2024-05-15 15:11:11', '1715760670926-mcqueen.jpeg'),
+('oSHPuh8329roMfFs', 'kornel', 'kornel2@gmail.com', '$2b$10$CQvjnsMPvAGUPcJcY07dUuIJn/3YDc/IABNjaUcTTSlgefs25espq', 'seller', '2024-05-15 15:47:18', '2024-05-15 15:47:18', '1715762838672-mcqueen.jpeg'),
+('A2pZ2__E3UiB4UuN', 'afsa', 'afsa3@gmail.com', '$2b$10$5.K6hKtqgjuBY9bk.BDvPus5J88/uiiOnQLcW2462EWWEzOe.PbyK', 'customer', '2024-05-15 15:47:55', '2024-05-15 15:47:55', '1715762875673-Screenshot_6.png'),
+('0pOCPZW6EzLThPfq', 'admin', 'admin2@gmail.com', '$2b$10$i6UVJo31T3Q7pugWFCuoMuw3Zqf2O3c6CPF5iLbT/ft1Xl6n2fety', 'admin', '2024-05-15 15:49:30', '2024-05-15 15:49:30', '1715762969951-mcqueen.jpeg'),
+('_8QBaL2dUsCORucP', 'cs1', 'cs@gmail.com', '$2b$10$mRjNz04d1naY9Dm3aSJ5hO5o2TZkezYPbJzmgWehKT8KLs0Yy56c6', 'customer', '2024-05-16 15:41:01', '2024-05-16 15:41:01', 'U2_uBOoHf31IBEtJ.png'),
+('H9O2l49FzCGFstW-', 'admin5', 'admin5@gmail.com', '$2b$10$HIxmTEC7WHD3v6aIRes2nu80LM6iRHVFDo/tHc8en0aaGGVtr9dD.', 'admin', '2024-05-16 15:41:46', '2024-05-16 15:41:46', 'Mg_2AWCZN3_I9XnL.jpeg'),
+('8Jof8yVwdC2zPJPD', 'seller', 'seller@gmail.com', '$2b$10$cU3.6/1yJr9zV1tBnZ.dEuFnScA2aex2g9.XAxFzU1B9lBV.5akg6', 'seller', '2024-05-16 15:42:24', '2024-05-16 15:42:24', 'mEWpsZUVHgzrP_Iy.jpeg');
 
 --
 -- Indexes for dumped tables
