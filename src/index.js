@@ -73,6 +73,8 @@ app.post('/createFood', upload.single('photo'), async (req, res, next) => {
             stock: req.body.stock,
             description: req.body.description,
             expireDate: req.body.expireDate,
+            pickUpTimeStart: req.body.pickUpTimeStart,
+            pickUpTimeEnd: req.body.pickUpTimeEnd,
             photo: imagePath,
             token: req.headers.authorization 
         };
@@ -748,7 +750,7 @@ app.post('/login', async (req, res, next) => {
                     user_id: userData.user_id,
                     username: userData.username,
                     email: userData.email,
-                    password: userData.password, // Ini mungkin perlu disesuaikan, mungkin tidak perlu dikembalikan
+                    password: userData.password, 
                     role: userData.role,
                     createdAt: userData.createdAt,
                     updatedAt: userData.updatedAt,

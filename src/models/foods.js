@@ -10,38 +10,66 @@ const saltRounds = 10;
 const jwtSecret = 'SECRET';
 
 const getAllFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, createdAt, updatedAt FROM food';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food';
 
     return dbPool.execute(SQLQuery);
 }
 
 const getReadyFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, createdAt, updatedAt FROM food WHERE status = 1';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food WHERE status = 1';
 
     return dbPool.execute(SQLQuery);
 }
 
 
 const getUnReadyFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, createdAt, updatedAt FROM food WHERE status = 0';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE status = 0';
 
     return dbPool.execute(SQLQuery);
 }
 
 const createNewFood = async (body) => {
-    const { seller_id, seller_city_id, name, price, stock, photo, description,expireDate, token } = body;
+    const {
+        seller_id,
+        seller_city_id,
+        name,
+        price,
+        stock,
+        photo,
+        description,
+        expireDate,
+        pickUpTimeStart,
+        pickUpTimeEnd,
+        token
+    } = body;
+
     const decodedToken = jwt.verify(token, jwtSecret);
     const foodId = nanoid(16);
     const createdAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
     const updatedAt = createdAt;
     const status = true;
 
-    const SQLQuery = `INSERT INTO food (id, seller_id,seller_city_id, name, price, stock, status, photo, description, expireDate, createdAt, updatedAt) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [foodId, seller_id,seller_city_id, name, price, stock,status, photo,description, expireDate, createdAt, updatedAt];
+    const SQLQuery = `INSERT INTO food (id, seller_id, seller_city_id, name, price, stock, status, photo, description, expireDate, pickUpTimeStart, pickUpTimeEnd, createdAt, updatedAt) 
+                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
+    const values = [
+        foodId,
+        seller_id || null,
+        seller_city_id || null,
+        name || null,
+        price || null,
+        stock || null,
+        status,
+        photo || null,
+        description || null,
+        expireDate || null,
+        pickUpTimeStart || null,
+        pickUpTimeEnd || null,
+        createdAt,
+        updatedAt
+    ];
 
     return dbPool.execute(SQLQuery, values);
-}
+};
 
 const deleteFood = async (foodData) => {
     const { id, seller_id, token } = foodData;
@@ -65,7 +93,7 @@ const deleteFood = async (foodData) => {
 
 const getFoodById = async (id) => {
     console.log(id);
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, createdAt, updatedAt FROM food WHERE id=?';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE id=?';
     const [rows, _] = await dbPool.execute(SQLQuery, [id]);
 
     if (rows.length === 0) {
@@ -81,7 +109,7 @@ const getFoodById = async (id) => {
 // };
 
 const updateFood = async (foodData) => {
-    const { id, seller_id, status, description, expireDate, token, price, stock, name, photo } = foodData;
+    const { id, seller_id, status, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  token, price, stock, name, photo } = foodData;
     const food = await getFoodById(id);
     const decodedToken = jwt.verify(token, jwtSecret);
     const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
@@ -90,8 +118,8 @@ const updateFood = async (foodData) => {
         throw new Error('Anda tidak memiliki izin untuk update data makanan ini');
     }
 
-    const SQLQuery = `UPDATE food SET name=?, price=?, stock=?, status=?, description=?, expireDate=?, updatedAt=?, photo=? WHERE id=?`;
-    const [result] = await dbPool.execute(SQLQuery, [name, price, stock, status, description, expireDate, updatedAt, photo, id]);
+    const SQLQuery = `UPDATE food SET name=?, price=?, stock=?, status=?, description=?, expireDate=?,pickUpTimeStart=?, pickUpTImeEnd=?,  updatedAt=?, photo=? WHERE id=?`;
+    const [result] = await dbPool.execute(SQLQuery, [name, price, stock, status, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  updatedAt, photo, id]);
 
     if (result.affectedRows === 0) {
         throw new Error('Data makanan tidak ditemukan');

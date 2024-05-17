@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 16, 2024 at 10:42 AM
+-- Generation Time: May 17, 2024 at 04:43 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -211,6 +211,8 @@ CREATE TABLE `food` (
   `photo` varchar(250) NOT NULL,
   `description` varchar(150) NOT NULL,
   `expireDate` varchar(50) NOT NULL,
+  `pickUpTimeStart` time NOT NULL,
+  `pickUpTimeEnd` time NOT NULL,
   `createdAt` varchar(100) NOT NULL,
   `updatedAt` varchar(100) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
@@ -219,11 +221,14 @@ CREATE TABLE `food` (
 -- Dumping data for table `food`
 --
 
-INSERT INTO `food` (`id`, `seller_id`, `seller_city_id`, `name`, `price`, `stock`, `status`, `photo`, `description`, `expireDate`, `createdAt`, `updatedAt`) VALUES
-('a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 1, 'kuah soto', 5000, 5, 1, '1715778679740-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '2024-05-15 20:11:19', '2024-05-15 20:11:19'),
-('WidTuFbUUDb-jTnb', 'ug7M7mFqhagndXeN', 1, 'Donat Madu', 3000, 10, 1, '1715778734162-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '2024-05-15 20:12:14', '2024-05-15 20:12:14'),
-('Q0zNKIjkw9ES5zsu', 'ug7M7mFqhagndXeN', 1, 'donat madu enak', 50000, 0, 0, 'Sj0e4sGpgs9Y1jge.jpeg', 'enak bos', '23.20 15/05/2024', '2024-05-15 20:26:39', '2024-05-15 21:39:16'),
-('nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 1, 'Donat Madu susu', 3000, 9, 1, 'TyZ_lVxgVA-Bq8n5.png', 'kauh soto enak', '23.00 15/05/2024', '2024-05-15 22:33:57', '2024-05-15 22:33:57');
+INSERT INTO `food` (`id`, `seller_id`, `seller_city_id`, `name`, `price`, `stock`, `status`, `photo`, `description`, `expireDate`, `pickUpTimeStart`, `pickUpTimeEnd`, `createdAt`, `updatedAt`) VALUES
+('a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 1, 'kuah soto', 5000, 5, 1, '1715778679740-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:11:19', '2024-05-15 20:11:19'),
+('WidTuFbUUDb-jTnb', 'ug7M7mFqhagndXeN', 1, 'Donat Madu', 3000, 10, 1, '1715778734162-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:12:14', '2024-05-15 20:12:14'),
+('Q0zNKIjkw9ES5zsu', 'ug7M7mFqhagndXeN', 1, 'donat madu enak', 50000, 0, 0, 'Sj0e4sGpgs9Y1jge.jpeg', 'enak bos', '23.20 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:26:39', '2024-05-15 21:39:16'),
+('nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 1, 'Donat Madu susu', 3000, 9, 1, 'TyZ_lVxgVA-Bq8n5.png', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 22:33:57', '2024-05-15 22:33:57'),
+('dA_MSO-9g6qlTzKd', 'lRB4146MGMwNYmUO', 1, 'Donat Madu susu', 3000, 10, 1, 'm47HjZGihAiGwNCk.png', 'kauh soto enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:39:15', '2024-05-17 21:39:15'),
+('KRKfGBCd9NtsIMeI', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu', 1000, 10, 1, 'jRReEobbD_3NwFKI.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:40:07', '2024-05-17 21:40:07'),
+('b7J0UTwT0KSqmVMd', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu 2', 1000, 10, 1, 'l6bGduLXFngAybCq.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:42:06', '2024-05-17 21:42:06');
 
 -- --------------------------------------------------------
 
