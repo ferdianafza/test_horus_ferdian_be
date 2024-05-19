@@ -103,13 +103,55 @@ const getFoodById = async (id) => {
     return rows[0];
 }
 
+const getFoodBySellerId = async (seller_id) => {
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE seller_id=?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [seller_id]);
+
+    if (rows.length === 0) {
+        throw new Error('Data Makanan Tidak Ditemukan');
+    }
+    // console.log(rows[0]);
+    // return rows[0];
+
+    return [rows, _]
+}
 // const getFoodById = async (id) => {
 //     const [rows] = await dbPool.query('SELECT * FROM food WHERE id = ?', [id]);
 //     return rows[0];
 // };
 
 const updateFood = async (foodData) => {
-    const { id, seller_id, status, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  token, price, stock, name, photo } = foodData;
+    const {
+        id,
+        seller_id,
+        status,
+        description,
+        expireDate,
+        pickUpTimeStart,
+        pickUpTimeEnd,
+        token,
+        price,
+        stock,
+        name,
+        photo
+    } = foodData;
+
+    // Replace undefined values with null
+    const safeValues = {
+        id,
+        seller_id,
+        status: status || null,
+        description: description || null,
+        expireDate: expireDate || null,
+        pickUpTimeStart: pickUpTimeStart || null,
+        pickUpTimeEnd: pickUpTimeEnd || null,
+        token,
+        price: price || null,
+        stock: stock || null,
+        name: name || null,
+        photo: photo || null
+    };
+
     const food = await getFoodById(id);
     const decodedToken = jwt.verify(token, jwtSecret);
     const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
@@ -118,8 +160,20 @@ const updateFood = async (foodData) => {
         throw new Error('Anda tidak memiliki izin untuk update data makanan ini');
     }
 
-    const SQLQuery = `UPDATE food SET name=?, price=?, stock=?, status=?, description=?, expireDate=?,pickUpTimeStart=?, pickUpTImeEnd=?,  updatedAt=?, photo=? WHERE id=?`;
-    const [result] = await dbPool.execute(SQLQuery, [name, price, stock, status, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  updatedAt, photo, id]);
+    const SQLQuery = `UPDATE food SET name=?, price=?, stock=?, status=?, description=?, expireDate=?, pickUpTimeStart=?, pickUpTimeEnd=?, updatedAt=?, photo=? WHERE id=?`;
+    const [result] = await dbPool.execute(SQLQuery, [
+        safeValues.name,
+        safeValues.price,
+        safeValues.stock,
+        safeValues.status,
+        safeValues.description,
+        safeValues.expireDate,
+        safeValues.pickUpTimeStart,
+        safeValues.pickUpTimeEnd,
+        updatedAt,
+        safeValues.photo,
+        safeValues.id
+    ]);
 
     if (result.affectedRows === 0) {
         throw new Error('Data makanan tidak ditemukan');
@@ -127,6 +181,7 @@ const updateFood = async (foodData) => {
 
     return { message: 'Data makanan berhasil diperbaharui' };
 };
+
 
 const updateFoodByOrderFood = async (foodData) => {
     const { food_id, amount } = foodData;
@@ -152,5 +207,6 @@ module.exports = {
     getFoodById,
     updateFoodByOrderFood,
     getReadyFoods,
-    getUnReadyFoods
+    getUnReadyFoods,
+    getFoodBySellerId
 }

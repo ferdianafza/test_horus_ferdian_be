@@ -144,6 +144,20 @@ app.get('/getFoodById', async (req, res, next) => {
         next(error);
     }
 });
+
+app.get('/getFoodBySellerId', async (req, res, next) => {
+    try {
+        const getFoodBySellerId = req.body.seller_id;
+        const [food] = await foodModel.getFoodBySellerId(getFoodBySellerId);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mendapatkan Data Makanan Berdasarkan Seller Id',
+            food: food
+        });
+    } catch (error) {
+        next(error);
+    }
+});
 // hapus makanan
 app.delete('/deleteFood', async (req, res, next) => {
     try {
@@ -172,6 +186,7 @@ app.put('/updateFood', upload.single('photo'), async (req, res, next) => {
             fs.renameSync(req.file.path, newFilePath);
             imagePath = newFileName;
         }
+
         const foodData = {
             id: req.body.id,
             seller_id: req.body.seller_id,
@@ -182,14 +197,18 @@ app.put('/updateFood', upload.single('photo'), async (req, res, next) => {
             price: req.body.price,
             stock: req.body.stock,
             name: req.body.name,
+            pickUpTimeStart: req.body.pickUpTimeStart,
+            pickUpTimeEnd: req.body.pickUpTimeEnd,
             photo: imagePath
         };
+
         const result = await foodModel.updateFood(foodData);
         res.status(201).json(result);
     } catch (error) {
         next(error);
     }
 });
+
 
 
 // ORDER FOOD
