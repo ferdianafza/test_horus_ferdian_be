@@ -331,6 +331,34 @@ app.put('/updateOrderToDiproses', express.json(), async (req, res, next) => {
     }
 });
 
+app.put('/updateOrderToSelesai', express.json(), async (req, res, next) => {
+    try {
+        const updateData = {
+            order_id: req.body.order_id,
+            seller_id: req.body.seller_id,
+            token: req.headers.authorization,
+        };
+        const result = await orderModel.updateOrderToSelesai(updateData);
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.put('/updateOrderToDibatalkan', express.json(), async (req, res, next) => {
+    try {
+        const updateData = {
+            order_id: req.body.order_id,
+            seller_id: req.body.seller_id,
+            token: req.headers.authorization,
+        };
+        const result = await orderModel.updateOrderToDibatalkan(updateData);
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
 
 
 // ambil semua data city
@@ -508,19 +536,19 @@ app.post('/loginCustomer', async (req, res, next) => {
     }
 });
 // ambil semua data customers
-app.get('/getAllCustomers', async (req, res, next) => {
-    try {
+// app.get('/getAllCustomers', async (req, res, next) => {
+//     try {
 
-        const [customers] = await customerModel.getAllCustomers();
-        res.status(201).json({
-            status: 200,
-            message: 'Berhasil Mengambil Semua Data Customer',
-            customers: customers
-        });
-    } catch (error) {
-        next(error);
-    }
-});
+//         const [customers] = await customerModel.getAllCustomers();
+//         res.status(201).json({
+//             status: 200,
+//             message: 'Berhasil Mengambil Semua Data Customer',
+//             customers: customers
+//         });
+//     } catch (error) {
+//         next(error);
+//     }
+// });
 
 
 // SELLER
@@ -610,6 +638,54 @@ app.get('/getAllSellers', async (req, res, next) => {
             status: 200,
             message: 'Berhasil Mengambil Semua Data Seller',
             customers: customers
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/getAllUserCustomers', async (req, res, next) => {
+    try {
+        const userId = req.body.user_id;
+        const token = req.headers.authorization;
+
+        const user = await userModel.getAdminDataById(userId);
+        if (user.role !== 'admin') {
+            return res.status(403).json({
+                status: 403,
+                message: 'Akses ditolak. Anda bukan admin.'
+            });
+        }
+
+        const customers = await userModel.getAllUserCustomers();
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Customer',
+            customers: customers 
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/getAllUserSellers', async (req, res, next) => {
+    try {
+        const userId = req.body.user_id;
+        const token = req.headers.authorization;
+
+        const user = await userModel.getAdminDataById(userId);
+        if (user.role !== 'admin') {
+            return res.status(403).json({
+                status: 403,
+                message: 'Akses ditolak. Anda bukan admin.'
+            });
+        }
+
+        const customers = await userModel.getAllUserSellers();
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Seller',
+            customers: customers 
         });
     } catch (error) {
         next(error);

@@ -163,6 +163,61 @@ const getAdminDataById = async (user_id) => {
     return rows[0];
 }
 
+const getAllUserCustomers = async () => {
+    const SQLQuery = `
+        SELECT 
+            c.id_cust, 
+            c.name AS customer_name, 
+            c.nomorWA, 
+            c.address, 
+            c.city_id, 
+            c.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.password, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            CONCAT("/assets/", u.photo) AS photo
+        FROM 
+            customer c
+        INNER JOIN 
+            user u ON c.user_user_id = u.user_id
+        WHERE 
+            u.role = 'customer'`;
+    const [rows, _] = await dbPool.execute(SQLQuery);
+    return rows; // Return the entire array of rows
+};
+
+const getAllUserSellers = async () => {
+    const SQLQuery = `
+        SELECT 
+            s.id_seller, 
+            s.name AS seller_name, 
+            s.desc,
+            s.nomorWA, 
+            s.address, 
+            s.city_id, 
+            s.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.password, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            CONCAT("/assets/", u.photo) AS photo
+        FROM 
+            seller s
+        INNER JOIN 
+            user u ON s.user_user_id = u.user_id
+        WHERE 
+            u.role = 'seller'`;
+    const [rows, _] = await dbPool.execute(SQLQuery);
+    return rows; 
+};
+
 module.exports = {
     getAllUsers,
     createNewUser,
@@ -173,5 +228,7 @@ module.exports = {
     checkRoleUserByEmail,
     getCustomerDataById,
     getSellerDataById,
-    getAdminDataById
+    getAdminDataById,
+    getAllUserCustomers,
+    getAllUserSellers
 }

@@ -189,7 +189,20 @@ const updateFoodByOrderFood = async (foodData) => {
     const newStock = food.stock - amount;
     let newStatus = food.status;
 
-    // Jika stok mencapai 0, atur status makanan menjadi false atau 0
+    if (newStock === 0) {
+        newStatus = 0;
+    }
+
+    const SQLQuery = `UPDATE food SET stock=?, status=? WHERE id=?`;
+    const [result] = await dbPool.execute(SQLQuery, [newStock, newStatus, food_id]);
+};
+
+const updateFoodIfCancelBySeller = async (foodData) => {
+    const { food_id, amount } = foodData;
+    const food = await getFoodById(food_id);
+    const newStock = food.stock + amount;
+    let newStatus = food.status;
+
     if (newStock === 0) {
         newStatus = 0;
     }
@@ -208,5 +221,6 @@ module.exports = {
     updateFoodByOrderFood,
     getReadyFoods,
     getUnReadyFoods,
-    getFoodBySellerId
+    getFoodBySellerId,
+    updateFoodIfCancelBySeller
 }

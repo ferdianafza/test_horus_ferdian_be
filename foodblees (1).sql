@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 19, 2024 at 04:40 PM
+-- Generation Time: May 21, 2024 at 03:54 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -20,33 +20,6 @@ SET time_zone = "+00:00";
 --
 -- Database: `foodblees`
 --
-
--- --------------------------------------------------------
-
---
--- Table structure for table `admin`
---
-
-CREATE TABLE `admin` (
-  `id` varchar(100) NOT NULL,
-  `email` varchar(100) NOT NULL,
-  `password` varchar(200) NOT NULL,
-  `name` varchar(100) NOT NULL,
-  `provinceId` int(20) NOT NULL,
-  `cityId` int(20) NOT NULL,
-  `address` varchar(200) NOT NULL,
-  `latitude` varchar(150) NOT NULL,
-  `longitude` varchar(150) NOT NULL,
-  `createdAt` varchar(150) NOT NULL,
-  `updatedAt` varchar(150) NOT NULL
-) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
-
---
--- Dumping data for table `admin`
---
-
-INSERT INTO `admin` (`id`, `email`, `password`, `name`, `provinceId`, `cityId`, `address`, `latitude`, `longitude`, `createdAt`, `updatedAt`) VALUES
-('vCWeHZbeXlSX05K8', 'admin@gmail.com', '$2b$10$1sczIYe3KFRszpresEAYVuDpDv7q6ZCO2MFxZhvakbo1hkvAPLYiu', 'admin', 1, 1, 'aceh kota', '39', '29', '2024-05-10T06:01:08.193Z', '2024-05-10T06:01:08.193Z');
 
 -- --------------------------------------------------------
 
@@ -225,7 +198,7 @@ INSERT INTO `food` (`id`, `seller_id`, `seller_city_id`, `name`, `price`, `stock
 ('a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 1, 'kuah soto', 5000, 5, 1, '1715778679740-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:11:19', '2024-05-15 20:11:19'),
 ('WidTuFbUUDb-jTnb', 'ug7M7mFqhagndXeN', 1, 'Donat Madu', 3000, 10, 1, '1715778734162-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:12:14', '2024-05-15 20:12:14'),
 ('Q0zNKIjkw9ES5zsu', 'ug7M7mFqhagndXeN', 1, 'donat madu enak', 50000, 0, 0, 'Sj0e4sGpgs9Y1jge.jpeg', 'enak bos', '23.20 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:26:39', '2024-05-15 21:39:16'),
-('nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 1, 'Donat Madu susu', 3000, 9, 1, 'TyZ_lVxgVA-Bq8n5.png', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 22:33:57', '2024-05-15 22:33:57'),
+('nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 1, 'Donat Madu susu', 3000, 10, 1, 'TyZ_lVxgVA-Bq8n5.png', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 22:33:57', '2024-05-15 22:33:57'),
 ('dA_MSO-9g6qlTzKd', 'lRB4146MGMwNYmUO', 1, 'Donat Madu susu', 3000, 10, 1, 'm47HjZGihAiGwNCk.png', 'kauh soto enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:39:15', '2024-05-17 21:39:15'),
 ('KRKfGBCd9NtsIMeI', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu', 1000, 10, 1, 'jRReEobbD_3NwFKI.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:40:07', '2024-05-17 21:40:07'),
 ('b7J0UTwT0KSqmVMd', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu 2', 1000, 10, 1, 'l6bGduLXFngAybCq.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:42:06', '2024-05-17 21:42:06');
@@ -253,7 +226,7 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `food_id`, `seller_id`, `customer_id`, `amount`, `price`, `status`, `createdAt`, `updatedAt`) VALUES
-('4mwDO3iEpUh5pHvi', 'nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 'nFDI6M9qBawpm3O1', '1', '3000', 'diproses', '2024-05-15 22:34:44', '2024-05-15 22:34:44');
+('4mwDO3iEpUh5pHvi', 'nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 'nFDI6M9qBawpm3O1', '1', '3000', 'diproses', '2024-05-15 22:34:44', '2024-05-21 20:10:09');
 
 -- --------------------------------------------------------
 

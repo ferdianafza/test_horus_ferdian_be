@@ -273,7 +273,6 @@ const updateOrderToDiproses = async (body) => {
         throw new Error('Order tidak ditemukan');
     }
 
-    // Verifikasi token
     const decodedToken = jwt.verify(token, jwtSecret);
     console.log(order[0].seller_id);
     console.log(seller_id);
@@ -281,13 +280,13 @@ const updateOrderToDiproses = async (body) => {
         throw new Error('Anda tidak memiliki izin untuk memperbarui order ini');
     }
 
-    // Memastikan seller_id dari order sesuai dengan seller_id yang diberikan
     if (order[0].seller_id != seller_id) {
         throw new Error('Anda tidak memiliki izin untuk memperbarui order ini');
     }
     const status = "diproses";
-    const SQLQuery = `UPDATE orders SET status=? WHERE order_id=?`;
-    const [result] = await dbPool.execute(SQLQuery, [status, order_id]);
+    const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+    const SQLQuery = `UPDATE orders SET status=?, updatedAt=? WHERE order_id=?`;
+    const [result] = await dbPool.execute(SQLQuery, [status, updatedAt,  order_id]);
 
     if (result.affectedRows === 0) {
         throw new Error('Data Orders tidak ada');
@@ -296,6 +295,70 @@ const updateOrderToDiproses = async (body) => {
     return { message: 'Data Orders Berhasil diperbaharui sekarang status nya sedang diproses' };
 };
 
+const updateOrderToDibatalkan = async (body) => {
+    const { order_id, seller_id, token } = body;
+    const order = await getOrdersByOrderId(order_id);
+
+    if (!order) {
+        throw new Error('Order tidak ditemukan');
+    }
+
+    const decodedToken = jwt.verify(token, jwtSecret);
+    if (order[0].seller_id != seller_id) {
+        throw new Error('Anda tidak memiliki izin untuk memperbarui order ini');
+    }
+
+    const status = "dibatalkan";
+    const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+    const SQLQuery = `UPDATE orders SET status=?, updatedAt=? WHERE order_id=?`;
+    const [result] = await dbPool.execute(SQLQuery, [status, updatedAt, order_id]);
+
+    if (result.affectedRows === 0) {
+        throw new Error('Data Orders tidak ada');
+    }
+
+    const foodId = order[0].food_id;
+    const amount = order[0].amount;
+    const updateStockQuery = `UPDATE food SET stock = stock + ? WHERE id = ?`;
+    const [updateResult] = await dbPool.execute(updateStockQuery, [amount, foodId]);
+
+    if (updateResult.affectedRows === 0) {
+        throw new Error('Gagal memperbarui stok makanan');
+    }
+
+    return { message: 'Data Orders berhasil diperbarui dan stok makanan telah ditambahkan kembali' };
+};
+
+
+const updateOrderToSelesai = async (body) => {
+    const { order_id, seller_id, token } = body;
+    const order = await getOrdersByOrderId(order_id);
+
+    if (!order) {
+        throw new Error('Order tidak ditemukan');
+    }
+
+    const decodedToken = jwt.verify(token, jwtSecret);
+    console.log(order[0].seller_id);
+    console.log(seller_id);
+    if (order[0].seller_id != seller_id) {
+        throw new Error('Anda tidak memiliki izin untuk memperbarui order ini');
+    }
+
+    if (order[0].seller_id != seller_id) {
+        throw new Error('Anda tidak memiliki izin untuk memperbarui order ini');
+    }
+    const status = "selesai";
+    const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+    const SQLQuery = `UPDATE orders SET status=?, updatedAt=? WHERE order_id=?`;
+    const [result] = await dbPool.execute(SQLQuery, [status, updatedAt,  order_id]);
+
+    if (result.affectedRows === 0) {
+        throw new Error('Data Orders tidak ada');
+    }
+
+    return { message: 'Data Orders Berhasil diperbaharui sekarang status nya selesai' };
+};
 
 module.exports = {
     getAllOrders,
@@ -307,5 +370,7 @@ module.exports = {
     getOrdersByCustomerId,
     getOrdersByFoodId,
     checkNewOrder,
-    updateOrderToDiproses
+    updateOrderToDiproses,
+    updateOrderToSelesai,
+    updateOrderToDibatalkan
 }
