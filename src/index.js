@@ -21,9 +21,9 @@ const cors = require('cors');
 
 const corsOptions = {
     origin: '*',
-    optionsSuccessStatus: 204
+    optionsSuccessStatus: 200
   };
-  
+
 app.use(cors(corsOptions));
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
