@@ -17,7 +17,9 @@ const orderModel = require('./models/orders');
 const cityModel = require('./models/cities');
 const provinceModel = require('./models/provincies');
 const app = express();
+const cors = require('cors');
 
+app.use(cors());
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(middlewareLogRequest);
