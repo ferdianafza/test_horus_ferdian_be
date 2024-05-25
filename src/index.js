@@ -16,6 +16,11 @@ const foodModel = require('./models/foods');
 const orderModel = require('./models/orders');
 const cityModel = require('./models/cities');
 const provinceModel = require('./models/provincies');
+const commentModel = require('./models/comments');
+const jwt = require('jsonwebtoken');
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+const jwtSecret = 'SECRET';
 const app = express();
 const cors = require('cors');
 
@@ -57,8 +62,6 @@ app.post('/upload',upload.single('photo'),(req, res) => {
         message: 'Upload berhasil'
     });
 });
-
-
 
 // Foods
 // Buat data makanan
@@ -963,6 +966,153 @@ app.get('/user/:id', async (req, res, next) => {
 });
 
 
+//COMMENT
+app.post('/createComment', async (req, res, next) => {
+    try {
+        const commentData = {
+            id_seller: req.body.id_seller,
+            id_cust: req.body.id_cust,
+            description: req.body.description
+
+        };
+        await commentModel.createComment(commentData);
+        res.status(201).json({ 
+            status: 200,
+            message: 'Berhasil menambahkan komentar'
+         });
+    } catch (error) {
+        next(error); 
+    }
+});
+
+app.get('/getCommentAll', async (req, res, next) => {
+    try {
+
+        const [comments] = await commentModel.getAllComments();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data komentar',
+            comments: comments
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/getCommentByIdSeller', async (req, res, next) => {
+    try {
+         const id_seller =  req.body.id_seller
+
+        const [comments] = await commentModel.getCommentByIdSeller(id_seller);
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Komentar Berdasarkan Id Seller',
+            comments: comments
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
+app.put('/updateSeller', upload.single('photo'), async (req, res, next) => {
+    try {
+        const token = req.headers.authorization;
+        if (!token) {
+            throw new Error('Token harus disertakan');
+        }
+
+        const decoded = jwt.verify(token, jwtSecret);
+        const userIdFromToken = decoded.id;
+
+        const existingUserData = await userModel.getSellerDataByIdForUpdate(req.body.user_id);
+        if (!existingUserData) {
+            throw new Error('Data seller tidak ditemukan');
+        }
+
+        let imagePath = existingUserData.photo;
+        if (req.file) {
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+            fs.renameSync(req.file.path, newFilePath);
+            imagePath = newFileName;
+        }
+
+        let encryptedPassword = existingUserData.password;
+        if (req.body.password) {
+            encryptedPassword = await bcrypt.hash(req.body.password, saltRounds);
+        }
+
+        const sellerData = {
+            user_id: req.body.user_id,
+            id_seller: req.body.id_seller || existingUserData.id_seller,
+            username: req.body.username || existingUserData.username,
+            email: req.body.email || existingUserData.email,
+            password: encryptedPassword,
+            name: req.body.name || existingUserData.name,
+            desc: req.body.desc || existingUserData.desc,
+            nomorWA: req.body.nomorWA || existingUserData.nomorWA,
+            address: req.body.address || existingUserData.address,
+            city_id: req.body.city_id || existingUserData.city_id,
+            city_province_id: req.body.city_province_id || existingUserData.city_province_id,
+            photo: imagePath
+        };
+
+        const result = await userModel.updateDataSeller(sellerData);
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.put('/updateCustomer', upload.single('photo'), async (req, res, next) => {
+    try {
+        const token = req.headers.authorization;
+        if (!token) {
+            throw new Error('Token harus disertakan');
+        }
+
+        const decoded = jwt.verify(token, jwtSecret);
+        const userIdFromToken = decoded.id;
+
+        const existingUserData = await userModel.getCustomerDataByIdForUpdate(req.body.user_id);
+        if (!existingUserData) {
+            throw new Error('Data customer tidak ditemukan');
+        }
+
+        let imagePath = existingUserData.photo;
+        if (req.file) {
+            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            const newFilePath = path.join(__dirname, '../public/images', newFileName);
+            fs.renameSync(req.file.path, newFilePath);
+            imagePath = newFileName;
+        }
+
+        let encryptedPassword = existingUserData.password;
+        if (req.body.password) {
+            encryptedPassword = await bcrypt.hash(req.body.password, saltRounds);
+        }
+
+        const customerData = {
+            user_id: req.body.user_id,
+            id_cust: req.body.id_cust || existingUserData.id_cust,
+            username: req.body.username || existingUserData.username,
+            email: req.body.email || existingUserData.email,
+            password: encryptedPassword,
+            name: req.body.name || existingUserData.name,
+            nomorWA: req.body.nomorWA || existingUserData.nomorWA,
+            address: req.body.address || existingUserData.address,
+            city_id: req.body.city_id || existingUserData.city_id,
+            city_province_id: req.body.city_province_id || existingUserData.city_province_id,
+            photo: imagePath
+        };
+
+        const result = await userModel.updateDataCustomer(customerData);
+        res.status(201).json(result);
+    } catch (error) {
+        next(error);
+    }
+});
 
 
 

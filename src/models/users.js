@@ -2,6 +2,7 @@ const dbPool = require('../config/database');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const { nanoid } = require('nanoid');
+const moment = require('moment-timezone');
 
 const saltRounds = 10;
 const jwtSecret = 'SECRET';
@@ -51,13 +52,6 @@ const authenticateUser = async (body) => {
 }
 
 
-const updateUser = (body, idSeller) => {
-    const SQLQuery = `  UPDATE seller 
-                        SET name='${body.name}', email='${body.email}', address='${body.address}' 
-                        WHERE id=${idSeller}`;
-
-    return dbPool.execute(SQLQuery);
-}
 
 const deleteUser = (idSeller) => {
     const SQLQuery = `DELETE FROM seller WHERE id=${idSeller}`;
@@ -129,6 +123,38 @@ const getCustomerDataById = async (user_id) => {
     return rows[0];
 }
 
+const getCustomerDataByIdForUpdate = async (user_id) => {
+    const SQLQuery = `
+        SELECT 
+            c.id_cust, 
+            c.name AS customer_name, 
+            c.nomorWA, 
+            c.address, 
+            c.city_id, 
+            c.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.password, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            u.photo
+        FROM 
+            customer c
+        INNER JOIN 
+            user u ON c.user_user_id = u.user_id
+        WHERE 
+            u.user_id = ?`;
+    const [rows, _] = await dbPool.execute(SQLQuery, [user_id]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
+
 const getSellerDataById = async (user_id) => {
     const SQLQuery = `
         SELECT 
@@ -161,6 +187,40 @@ const getSellerDataById = async (user_id) => {
 
     return rows[0];
 }
+
+const getSellerDataByIdForUpdate = async (user_id) => {
+    const SQLQuery = `
+        SELECT 
+            s.id_seller, 
+            s.name, 
+            s.desc,
+            s.nomorWA, 
+            s.address, 
+            s.city_id, 
+            s.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.password, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            u.photo
+        FROM 
+            seller s 
+        INNER JOIN 
+            user u ON s.user_user_id = u.user_id
+        WHERE 
+            u.user_id = ?`;
+    const [rows, _] = await dbPool.execute(SQLQuery, [user_id]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
+
 
 
 const getAdminDataById = async (user_id) => {
@@ -229,10 +289,71 @@ const getAllUserSellers = async () => {
     return rows; 
 };
 
+const updateDataSeller = async (data) => {
+    const { user_id, id_seller, username, email, password, name, desc, nomorWA, address, city_id, city_province_id, photo } = data;
+    const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+    const SQLQuery = `
+        UPDATE seller s
+        INNER JOIN user u ON s.user_user_id = u.user_id
+        SET 
+            u.username = ?,
+            u.email = ?,
+            u.password = ?,
+            s.name = ?,
+            s.desc = ?,
+            s.nomorWA = ?,
+            s.address = ?,
+            s.city_id = ?,
+            s.city_province_id = ?,
+            u.photo = ?,
+            u.updatedAt = ?
+        WHERE u.user_id = ? AND s.id_seller = ?`;
+
+    const values = [username, email, password, name, desc, nomorWA, address, city_id, city_province_id, photo, updatedAt, user_id, id_seller];
+
+    const [result] = await dbPool.execute(SQLQuery, values);
+
+    if (result.affectedRows === 0) {
+        throw new Error('Update data seller gagal');
+    }
+
+    return { status: 200,
+        message: 'Data seller berhasil diperbarui' };
+};
+
+const updateDataCustomer = async (data) => {
+    const { user_id, id_cust, username, email, password, name, nomorWA, address, city_id, city_province_id, photo } = data;
+    const updatedAt = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+    const SQLQuery = `
+        UPDATE customer c
+        INNER JOIN user u ON c.user_user_id = u.user_id
+        SET 
+            u.username = ?,
+            u.email = ?,
+            u.password = ?,
+            c.name = ?,
+            c.nomorWA = ?,
+            c.address = ?,
+            c.city_id = ?,
+            c.city_province_id = ?,
+            u.photo = ?,
+            u.updatedAt = ?
+        WHERE u.user_id = ? AND c.id_cust = ?`;
+
+    const values = [username, email, password, name, nomorWA, address, city_id, city_province_id, photo, updatedAt, user_id, id_cust];
+
+    const [result] = await dbPool.execute(SQLQuery, values);
+
+    if (result.affectedRows === 0) {
+        throw new Error('Update data customer gagal');
+    }
+
+    return { status: 200, message: 'Data customer berhasil diperbarui' };
+};
+
 module.exports = {
     getAllUsers,
     createNewUser,
-    updateUser,
     deleteUser,
     getUserByEmail,
     getUserById,
@@ -242,5 +363,9 @@ module.exports = {
     getSellerDataById,
     getAdminDataById,
     getAllUserCustomers,
-    getAllUserSellers
+    getAllUserSellers,
+    updateDataSeller,
+    updateDataCustomer,
+    getCustomerDataByIdForUpdate,
+    getSellerDataByIdForUpdate
 }

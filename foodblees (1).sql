@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 21, 2024 at 03:54 PM
+-- Generation Time: May 25, 2024 at 09:19 AM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -144,6 +144,27 @@ INSERT INTO `city` (`id`, `provinceId`, `name`) VALUES
 -- --------------------------------------------------------
 
 --
+-- Table structure for table `comment`
+--
+
+CREATE TABLE `comment` (
+  `id_comment` varchar(100) NOT NULL,
+  `id_seller` varchar(100) NOT NULL,
+  `id_cust` varchar(100) NOT NULL,
+  `description` varchar(255) NOT NULL,
+  `createdAt` varchar(100) NOT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
+
+--
+-- Dumping data for table `comment`
+--
+
+INSERT INTO `comment` (`id_comment`, `id_seller`, `id_cust`, `description`, `createdAt`) VALUES
+('aCRDNUXLfPnRx87r', 'h7tj6Qyf8UPtgafJ', 'X6Yi6FpPDUPQ7yBP', 'enak banget makanan nya', '2024-05-25 13:02:42');
+
+-- --------------------------------------------------------
+
+--
 -- Table structure for table `customer`
 --
 
@@ -162,7 +183,7 @@ CREATE TABLE `customer` (
 --
 
 INSERT INTO `customer` (`id_cust`, `name`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
-('X6Yi6FpPDUPQ7yBP', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'Pf3Cfof-i7s03HDY'),
+('X6Yi6FpPDUPQ7yBP', 'korkor', '082115759568', 'margaasih', 1, 1, 'Pf3Cfof-i7s03HDY'),
 ('Hz_ZwUmRO959iYj1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'lzxA8-2rdDWjNmhT'),
 ('nFDI6M9qBawpm3O1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'A2pZ2__E3UiB4UuN'),
 ('T9WnXW-KSfmk22yA', 'ferdian afza', '082127015766', 'bandung', 1, 1, '_8QBaL2dUsCORucP');
@@ -304,7 +325,7 @@ CREATE TABLE `seller` (
 --
 
 INSERT INTO `seller` (`id_seller`, `name`, `desc`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
-('h7tj6Qyf8UPtgafJ', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '1d_yWGuBE9rG9moU'),
+('h7tj6Qyf8UPtgafJ', 'korkor', 'yuhu ini warung kornel', '082115759568', 'margaasih', 1, 1, '1d_yWGuBE9rG9moU'),
 ('ug7M7mFqhagndXeN', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, 'oSHPuh8329roMfFs'),
 ('lRB4146MGMwNYmUO', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '8Jof8yVwdC2zPJPD');
 
@@ -330,9 +351,9 @@ CREATE TABLE `user` (
 --
 
 INSERT INTO `user` (`user_id`, `username`, `email`, `password`, `role`, `createdAt`, `updatedAt`, `photo`) VALUES
-('Pf3Cfof-i7s03HDY', 'afsa', 'afsa@gmail.com', '$2b$10$yHWOENTXbR63ppRd1uFA1.46R9waqVSB2NLTkRdaP7feQmXJdVdKq', 'customer', '2024-05-15T07:32:57.418Z', '2024-05-15T07:32:57.418Z', '1715758377254-Screenshot_6.png'),
+('Pf3Cfof-i7s03HDY', 'FERDIAN HIDAYAT', 'afsaafza@gmail.com', '$2b$10$tPzvXA/N8Ym93VO6hR3pGOF2XZoaV0L1vtiFajMSMjaf1Tc7uJ3BO', 'customer', '2024-05-15T07:32:57.418Z', '2024-05-25 14:15:40', 'xWYjF9cD8sXwdkY8.png'),
 ('lzxA8-2rdDWjNmhT', 'afsa', 'afsa2@gmail.com', '$2b$10$1kAvc0yMofbAjA328Jm.Weh0biJvCK.MWGG.D86wVvnk7rKxyrv/q', 'customer', '2024-05-15 14:42:52', '2024-05-15 14:42:52', '1715758972321-Screenshot_6.png'),
-('1d_yWGuBE9rG9moU', 'kornel', 'kornel@gmail.com', '$2b$10$Z5dscw18pxucByP1ll1j7.gFeJPyoc411.aVfG4QmmGWd2IdIeKU6', 'seller', '2024-05-15 15:03:41', '2024-05-15 15:03:41', '1715760221028-mcqueen.jpeg'),
+('1d_yWGuBE9rG9moU', 'Kornelius bosku', 'mamangkornel@gmail.com', '$2b$10$wjFWpXlEu78gwnRiGdrqJe9Hc9FWZ9bfMVJc/qvBxbJ5okHNjr.1i', 'seller', '2024-05-15 15:03:41', '2024-05-25 14:18:32', 'lWtGRhahYfnhPbhP.png'),
 ('1ZZgaip1rA4lNgjb', 'admin', 'admin@gmail.com', '$2b$10$bKyBAvlyDyztKjsvoZsSdOcDzBRVnYlX2uVyXcs5PIvuALAKC8ZCq', 'admin', '2024-05-15 15:11:11', '2024-05-15 15:11:11', '1715760670926-mcqueen.jpeg'),
 ('oSHPuh8329roMfFs', 'kornel', 'kornel2@gmail.com', '$2b$10$CQvjnsMPvAGUPcJcY07dUuIJn/3YDc/IABNjaUcTTSlgefs25espq', 'seller', '2024-05-15 15:47:18', '2024-05-15 15:47:18', '1715762838672-mcqueen.jpeg'),
 ('A2pZ2__E3UiB4UuN', 'afsa', 'afsa3@gmail.com', '$2b$10$5.K6hKtqgjuBY9bk.BDvPus5J88/uiiOnQLcW2462EWWEzOe.PbyK', 'customer', '2024-05-15 15:47:55', '2024-05-15 15:47:55', '1715762875673-Screenshot_6.png'),
