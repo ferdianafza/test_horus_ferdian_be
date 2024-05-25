@@ -873,6 +873,96 @@ app.post('/login', async (req, res, next) => {
     }
 });
 
+app.get('/user/:id', async (req, res, next) => {
+    try {
+        const userId = req.params.id;
+
+        if (!userId) {
+            throw new Error('User ID harus disertakan');
+        }
+
+        // Retrieve user data by ID
+        let userData = await userModel.getUserById(userId);
+
+        if (!userData) {
+            throw new Error('User tidak ditemukan');
+        }
+
+        // Based on the role, fetch additional data
+        let responseData;
+        switch (userData.role) {
+            case 'customer':
+                const customerData = await userModel.getCustomerDataById(userId);
+                if (!customerData) {
+                    throw new Error('Data customer tidak ditemukan');
+                }
+                responseData = {
+                    id_cust: customerData.id_cust,
+                    customer_name: customerData.customer_name,
+                    nomorWA: customerData.nomorWA,
+                    address: customerData.address,
+                    city_id: customerData.city_id,
+                    city_province_id: customerData.city_province_id,
+                    user_id: customerData.user_id,
+                    username: customerData.username,
+                    email: customerData.email,
+                    role: customerData.role,
+                    createdAt: customerData.createdAt,
+                    updatedAt: customerData.updatedAt,
+                    photo: customerData.photo
+                };
+                break;
+            case 'seller':
+                const sellerData = await userModel.getSellerDataById(userId);
+                if (!sellerData) {
+                    throw new Error('Data seller tidak ditemukan');
+                }
+                responseData = {
+                    id_seller: sellerData.id_seller,
+                    name: sellerData.name,
+                    desc: sellerData.desc,
+                    nomorWA: sellerData.nomorWA,
+                    address: sellerData.address,
+                    city_id: sellerData.city_id,
+                    city_province_id: sellerData.city_province_id,
+                    user_id: sellerData.user_id,
+                    username: sellerData.username,
+                    email: sellerData.email,
+                    role: sellerData.role,
+                    createdAt: sellerData.createdAt,
+                    updatedAt: sellerData.updatedAt,
+                    photo: sellerData.photo
+                };
+                break;
+            case 'admin':
+                const adminData = await userModel.getAdminDataById(userId);
+                if (!adminData) {
+                    throw new Error('Data admin tidak ditemukan');
+                }
+                responseData = {
+                    user_id: adminData.user_id,
+                    username: adminData.username,
+                    email: adminData.email,
+                    role: adminData.role,
+                    createdAt: adminData.createdAt,
+                    updatedAt: adminData.updatedAt,
+                    photo: adminData.photo
+                };
+                break;
+            default:
+                throw new Error('Peran pengguna tidak valid');
+        }
+
+        res.status(200).json({
+            message: 'Data user berhasil ditemukan',
+            data: responseData
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+
 
 
 

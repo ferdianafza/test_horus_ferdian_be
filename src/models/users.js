@@ -75,6 +75,17 @@ const getUserByEmail = async (email) => {
 
     return rows[0];
 }
+
+const getUserById = async (id) => {
+    const SQLQuery = 'SELECT * FROM user WHERE user_id = ?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [id]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
 const checkRoleUserByEmail = async (email) => {
     const SQLQuery = 'SELECT user_id, username, email, password, role FROM user WHERE email = ?';
     const [rows, _] = await dbPool.execute(SQLQuery, [email]);
@@ -224,6 +235,7 @@ module.exports = {
     updateUser,
     deleteUser,
     getUserByEmail,
+    getUserById,
     authenticateUser,
     checkRoleUserByEmail,
     getCustomerDataById,
