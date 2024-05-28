@@ -32,8 +32,8 @@ const corsOptions = {
 
 AWS.config.update({
       region: 'ap-southeast-1',
-      accessKeyId: process.env.accessKeyId,
-      secretAccessKey: process.env.secretAccessKey
+      accessKeyId: process.env.KEY,
+      secretAccessKey: process.env.SECRET_ACCESS
   });
 
 const s3 = new AWS.S3();
