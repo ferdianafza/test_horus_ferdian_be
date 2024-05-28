@@ -10,20 +10,20 @@ const saltRounds = 10;
 const jwtSecret = 'SECRET';
 
 const getAllFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food';
 
     return dbPool.execute(SQLQuery);
 }
 
 const getReadyFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food WHERE status = 1';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food WHERE status = 1';
 
     return dbPool.execute(SQLQuery);
 }
 
 
 const getUnReadyFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE status = 0';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE status = 0';
 
     return dbPool.execute(SQLQuery);
 }
@@ -93,7 +93,7 @@ const deleteFood = async (foodData) => {
 
 const getFoodById = async (id) => {
     console.log(id);
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE id=?';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE id=?';
     const [rows, _] = await dbPool.execute(SQLQuery, [id]);
 
     if (rows.length === 0) {
@@ -104,7 +104,7 @@ const getFoodById = async (id) => {
 }
 
 const getFoodBySellerId = async (seller_id) => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("/assets/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE seller_id=?';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd,  createdAt, updatedAt FROM food WHERE seller_id=?';
     const [rows, _] = await dbPool.execute(SQLQuery, [seller_id]);
 
     if (rows.length === 0) {

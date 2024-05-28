@@ -8,6 +8,8 @@
     "start": "nodemon src/index.js"
   },
   "dependencies": {
+    "@google-cloud/storage": "^7.11.1",
+    "aws-sdk": "^2.1628.0",
     "bcrypt": "^5.1.1",
     "cors": "^2.8.5",
     "dotenv": "^16.0.3",

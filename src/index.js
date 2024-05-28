@@ -23,11 +23,43 @@ const saltRounds = 10;
 const jwtSecret = 'SECRET';
 const app = express();
 const cors = require('cors');
+const AWS = require("aws-sdk");
 
 const corsOptions = {
     origin: '*',
     optionsSuccessStatus: 200
   };
+
+AWS.config.update({
+      region: 'ap-southeast-1',
+      accessKeyId: 'AKIATBT6MIBJUVJR62UF',
+      secretAccessKey: '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'
+  });
+
+const s3 = new AWS.S3();
+
+const uploadToS3 = async (filePath, fileName) => {
+    const fileStream = fs.createReadStream(filePath);
+
+    const params = {
+        Bucket: 'photo-foodbless', // Replace with your actual bucket name
+        Key: `storage_folder/${fileName}`, // Adjust folder as necessary
+        Body: fileStream,
+        ContentType: 'application/octet-stream', // Adjust as necessary
+    };
+
+    return new Promise((resolve, reject) => {
+        s3.upload(params, (err, data) => {
+            if (err) {
+                console.error('Error uploading file:', err);
+                reject(err);
+            } else {
+                console.log('File uploaded successfully. File location:', data.Location);
+                resolve(data.Location);
+            }
+        });
+    });
+};
 
 app.use(cors(corsOptions));
 app.use(express.json());
@@ -73,6 +105,7 @@ app.post('/createFood', upload.single('photo'), async (req, res, next) => {
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
 
             fs.renameSync(req.file.path, newFilePath);
+            imagePath = await uploadToS3(newFilePath, newFileName);
             imagePath = newFileName;
         }
         const foodData = {
@@ -188,12 +221,15 @@ app.delete('/deleteFood', async (req, res, next) => {
 // update makanan
 app.put('/updateFood', upload.single('photo'), async (req, res, next) => {
     try {
-        let imagePath = null;
+
+        const getPhotoOld = await foodModel.getFoodById(req.body.id);
+        let imagePath = getPhotoOld.photo;
         if (req.file) {
             const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
 
             fs.renameSync(req.file.path, newFilePath);
+            imagePath = await uploadToS3(newFilePath, newFileName);
             imagePath = newFileName;
         }
 
@@ -471,42 +507,46 @@ app.post('/adminRegist', async (req, res, next) => {
 
 // CUSTOMER
 // buat akun customer
+
 app.post('/createCustomer', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
+        let newFileName = null;
         if (req.file) {
-            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
 
             fs.renameSync(req.file.path, newFilePath);
 
-            imagePath = newFileName;
-            // imagePath = req.file.filename; 
+            
+            imagePath = await uploadToS3(newFilePath, newFileName);
         }
+
         const userCustomerData = {
             username: req.body.username,
             email: req.body.email,
             password: req.body.password,
             confirmPassword: req.body.confirmPassword,
             role: req.body.role,
-            photo: imagePath,
+            photo: newFileName, 
 
             name: req.body.name,
             nomorWA: req.body.nomorWA,
             address: req.body.address,
             city_id: req.body.city_id,
             city_province_id: req.body.city_province_id
-
         };
+
         await customerModel.createNewCustomer(userCustomerData);
-        res.status(201).json({ 
+        res.status(201).json({
             status: 200,
             message: 'Berhasil Membuat Akun Customer'
-         });
+        });
     } catch (error) {
-        next(error); 
+        next(error);
     }
 });
+
 // login akun customer
 app.post('/loginCustomer', async (req, res, next) => {
     try {
@@ -546,19 +586,6 @@ app.post('/loginCustomer', async (req, res, next) => {
     }
 });
 // ambil semua data customers
-// app.get('/getAllCustomers', async (req, res, next) => {
-//     try {
-
-//         const [customers] = await customerModel.getAllCustomers();
-//         res.status(201).json({
-//             status: 200,
-//             message: 'Berhasil Mengambil Semua Data Customer',
-//             customers: customers
-//         });
-//     } catch (error) {
-//         next(error);
-//     }
-// });
 
 
 // SELLER
@@ -566,14 +593,15 @@ app.post('/loginCustomer', async (req, res, next) => {
 app.post('/createSeller', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
+        let newFileName = null;
         if (req.file) {
-            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
 
             fs.renameSync(req.file.path, newFilePath);
 
-            imagePath = newFileName;
-            // imagePath = req.file.filename; 
+            
+            imagePath = await uploadToS3(newFilePath, newFileName);
         }
         const userSellerData = {
             username: req.body.username,
@@ -581,7 +609,7 @@ app.post('/createSeller', upload.single('photo'), async (req, res, next) => {
             password: req.body.password,
             confirmPassword: req.body.confirmPassword,
             role: req.body.role,
-            photo: imagePath,
+            photo: newFileName,
 
             name: req.body.name,
             nomorWA: req.body.nomorWA,
@@ -707,14 +735,15 @@ app.get('/getAllUserSellers', async (req, res, next) => {
 app.post('/createAdmin', upload.single('photo'), async (req, res, next) => {
     try {
         let imagePath = null;
+        let newFileName = null;
         if (req.file) {
-            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+            newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
 
             fs.renameSync(req.file.path, newFilePath);
 
-            imagePath = newFileName;
-            // imagePath = req.file.filename; 
+            
+            imagePath = await uploadToS3(newFilePath, newFileName);
         }
         const userDataAdmin = {
             username: req.body.username,
@@ -722,7 +751,7 @@ app.post('/createAdmin', upload.single('photo'), async (req, res, next) => {
             password: req.body.password,
             confirmPassword: req.body.confirmPassword,
             role: req.body.role,
-            photo: imagePath,
+            photo: newFileName,
 
         };
         await adminModel.createNewAdmin(userDataAdmin);
@@ -1031,10 +1060,13 @@ app.put('/updateSeller', upload.single('photo'), async (req, res, next) => {
         }
 
         let imagePath = existingUserData.photo;
+        let newFileName = null;
         if (req.file) {
-            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+             newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
             fs.renameSync(req.file.path, newFilePath);
+            imagePath = await uploadToS3(newFilePath, newFileName);
             imagePath = newFileName;
         }
 
@@ -1081,10 +1113,13 @@ app.put('/updateCustomer', upload.single('photo'), async (req, res, next) => {
         }
 
         let imagePath = existingUserData.photo;
+        let newFileName = null;
         if (req.file) {
-            const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+             newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
             const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
             fs.renameSync(req.file.path, newFilePath);
+            imagePath = await uploadToS3(newFilePath, newFileName);
             imagePath = newFileName;
         }
 
@@ -1115,6 +1150,36 @@ app.put('/updateCustomer', upload.single('photo'), async (req, res, next) => {
 });
 
 
+
+
+
+app.post('/testUpload', upload.single('photo'), async (req, res, next) => {
+    try {
+        if (!req.file) {
+            throw new Error("File not uploaded");
+        }
+
+        const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
+        const newFilePath = path.join(__dirname, '../public/images', newFileName);
+
+        fs.renameSync(req.file.path, newFilePath);
+
+        const result = await uploadToS3(newFilePath, newFileName);
+        console.log('File uploaded successfully:', result);
+
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Upload Photo',
+            url: result,
+        });
+    } catch (error) {
+        console.error('Error in file upload:', error);
+        res.status(500).json({
+            status: 500,
+            message: error.message,
+        });
+    }
+});
 
 
 app.use((err, req, res, next) => {

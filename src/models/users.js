@@ -107,7 +107,7 @@ const getCustomerDataById = async (user_id) => {
             u.role, 
             u.createdAt, 
             u.updatedAt, 
-            CONCAT("/assets/", u.photo) AS photo
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo
         FROM 
             customer c
         INNER JOIN 
@@ -172,7 +172,7 @@ const getSellerDataById = async (user_id) => {
             u.role, 
             u.createdAt, 
             u.updatedAt, 
-            CONCAT("/assets/", u.photo) AS photo
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo
         FROM 
             seller s 
         INNER JOIN 
@@ -224,7 +224,7 @@ const getSellerDataByIdForUpdate = async (user_id) => {
 
 
 const getAdminDataById = async (user_id) => {
-    const SQLQuery = 'SELECT user_id, username, email, password, role, createdAt, updatedAt, CONCAT("/assets/", photo) AS photo FROM user WHERE user_id = ?';
+    const SQLQuery = 'SELECT user_id, username, email, password, role, createdAt, updatedAt, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo FROM user WHERE user_id = ?';
     const [rows, _] = await dbPool.execute(SQLQuery, [user_id]);
 
     if (rows.length === 0) {
@@ -250,7 +250,7 @@ const getAllUserCustomers = async () => {
             u.role, 
             u.createdAt, 
             u.updatedAt, 
-            CONCAT("/assets/", u.photo) AS photo
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo
         FROM 
             customer c
         INNER JOIN 
@@ -278,7 +278,7 @@ const getAllUserSellers = async () => {
             u.role, 
             u.createdAt, 
             u.updatedAt, 
-            CONCAT("/assets/", u.photo) AS photo
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo
         FROM 
             seller s
         INNER JOIN 
