@@ -42,10 +42,10 @@ const uploadToS3 = async (filePath, fileName) => {
     const fileStream = fs.createReadStream(filePath);
 
     const params = {
-        Bucket: 'photo-foodbless', // Replace with your actual bucket name
-        Key: `storage_folder/${fileName}`, // Adjust folder as necessary
+        Bucket: 'photo-foodbless', 
+        Key: `storage_folder/${fileName}`, 
         Body: fileStream,
-        ContentType: 'application/octet-stream', // Adjust as necessary
+        ContentType: 'application/octet-stream', 
     };
 
     return new Promise((resolve, reject) => {
