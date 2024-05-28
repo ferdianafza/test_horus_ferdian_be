@@ -31,7 +31,7 @@ const corsOptions = {
   };
 
 AWS.config.update({
-      region: 'ap-southeast-1',
+      region: process.env.REGION,
       accessKeyId: process.env.KEY,
       secretAccessKey: process.env.SECRET_ACCESS
   });
