@@ -47,7 +47,7 @@ const authenticateUser = async (body) => {
         throw new Error('Password Tidak Valid!');
     }
 
-    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1h' });
+    const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret, { expiresIn: '1d' });
     return token;
 }
 
