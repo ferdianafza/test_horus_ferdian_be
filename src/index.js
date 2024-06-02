@@ -173,10 +173,11 @@ app.get('/getUnReadyFoods', async (req, res, next) => {
         next(error);
     }
 });
+
 // ambil data makanan berdasarkan Id
-app.get('/getFoodById', async (req, res, next) => {
+app.get('/getFoodById/:id', async (req, res, next) => {
     try {
-        const foodId = req.body.id;
+        const foodId = req.params.id;
         const food = await foodModel.getFoodById(foodId);
         res.status(200).json({
             status: 200,
@@ -188,9 +189,9 @@ app.get('/getFoodById', async (req, res, next) => {
     }
 });
 
-app.get('/getFoodBySellerId', async (req, res, next) => {
+app.get('/getFoodBySellerId/:seller_id', async (req, res, next) => {
     try {
-        const getFoodBySellerId = req.body.seller_id;
+        const getFoodBySellerId = req.params.seller_id;
         const [food] = await foodModel.getFoodBySellerId(getFoodBySellerId);
         res.status(200).json({
             status: 200,
