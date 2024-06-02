@@ -132,7 +132,7 @@ app.post('/createFood', upload.single('photo'), async (req, res, next) => {
 });
 
 // ambil semua data makanan
-app.get('/getAllFoods', async (req, res, next) => {
+app.get('/foods', async (req, res, next) => {
     try {
 
         const [foods] = await foodModel.getAllFoods();
@@ -175,7 +175,7 @@ app.get('/getUnReadyFoods', async (req, res, next) => {
 });
 
 // ambil data makanan berdasarkan Id
-app.get('/getFoodById/:id', async (req, res, next) => {
+app.get('/food/:id', async (req, res, next) => {
     try {
         const foodId = req.params.id;
         const food = await foodModel.getFoodById(foodId);
