@@ -10,10 +10,34 @@ const saltRounds = 10;
 const jwtSecret = 'SECRET';
 
 const getAllFoods = () => {
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food';
+    const SQLQuery = `
+        SELECT 
+            food.id, 
+            food.seller_id, 
+            food.seller_city_id, 
+            food.name, 
+            food.price, 
+            food.stock, 
+            food.status, 
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", food.photo) AS photo, 
+            food.description, 
+            food.expireDate, 
+            food.pickUpTimeStart, 
+            food.pickUpTimeEnd, 
+            food.createdAt, 
+            food.updatedAt,
+            seller.name AS seller_name
+        FROM 
+            food
+        INNER JOIN 
+            seller 
+        ON 
+            food.seller_id = seller.id_seller;
+    `;
 
     return dbPool.execute(SQLQuery);
 }
+
 
 const getReadyFoods = () => {
     const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTImeEnd, createdAt, updatedAt FROM food WHERE status = 1';

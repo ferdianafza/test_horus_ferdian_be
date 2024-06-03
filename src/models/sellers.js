@@ -24,7 +24,7 @@ const getAllSellers = () => {
             u.role, 
             u.createdAt, 
             u.updatedAt, 
-            CONCAT("/assets/", u.photo) AS photo
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo
         FROM 
             seller s
         INNER JOIN 
@@ -139,6 +139,37 @@ const getSellerByEmail = async (email) => {
     return rows[0];
 }
 
+const getSellerById = async (id_seller) => {
+    const SQLQuery = `
+        SELECT 
+            s.id_seller, 
+            s.name, 
+            s.nomorWA, 
+            s.address, 
+            s.city_id, 
+            s.city_province_id, 
+            u.user_id, 
+            u.username, 
+            u.email, 
+            u.role, 
+            u.createdAt, 
+            u.updatedAt, 
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo 
+        FROM 
+            seller s 
+        INNER JOIN 
+            user u ON s.user_user_id = u.user_id
+        WHERE 
+            s.id_seller = ?`;
+    const [rows, _] = await dbPool.execute(SQLQuery, [id_seller]);
+
+    if (rows.length === 0) {
+        throw new Error('Akun Tidak Ditemukan');
+    }
+
+    return rows[0];
+}
+
 module.exports = {
     getAllSellers,
     createNewSeller,
@@ -146,4 +177,5 @@ module.exports = {
     deleteSeller,
     getSellerByEmail,
     authenticateSeller,
+    getSellerById
 }

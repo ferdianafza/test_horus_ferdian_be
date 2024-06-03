@@ -672,10 +672,24 @@ app.post('/loginSeller', async (req, res, next) => {
 app.get('/getAllSellers', async (req, res, next) => {
     try {
 
-        const [customers] = await sellerModel.getAllSellers();
+        const [seller] = await sellerModel.getAllSellers();
         res.status(201).json({
             status: 200,
             message: 'Berhasil Mengambil Semua Data Seller',
+            seller: seller
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/getAllCustomers', async (req, res, next) => {
+    try {
+
+        const [customers] = await customerModel.getAllCustomers();
+        res.status(201).json({
+            status: 200,
+            message: 'Berhasil Mengambil Semua Data Customer',
             customers: customers
         });
     } catch (error) {
@@ -725,6 +739,20 @@ app.get('/getAllUserSellers', async (req, res, next) => {
             status: 200,
             message: 'Berhasil Mengambil Semua Data Seller',
             customers: customers 
+        });
+    } catch (error) {
+        next(error);
+    }
+});
+
+app.get('/seller/:id_seller', async (req, res, next) => {
+    try {
+        const id_seller = req.params.id_seller;
+        const seller = await sellerModel.getSellerById(id_seller);
+        res.status(200).json({
+            status: 200,
+            message: 'Berhasil Mendapatkan Data Seller By Id Seller',
+            seller: seller
         });
     } catch (error) {
         next(error);

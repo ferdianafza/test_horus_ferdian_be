@@ -23,7 +23,7 @@ const getAllCustomers = () => {
             u.role, 
             u.createdAt, 
             u.updatedAt, 
-            CONCAT("/assets/", u.photo) AS photo
+            CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", u.photo) AS photo
         FROM 
             customer c
         INNER JOIN 
