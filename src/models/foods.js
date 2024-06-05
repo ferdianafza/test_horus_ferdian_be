@@ -117,7 +117,19 @@ const deleteFood = async (foodData) => {
 
 const getFoodById = async (id) => {
     console.log(id);
-    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", food.photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTimeEnd,  createdAt, updatedAt FROM food WHERE id=?';
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, CONCAT("https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/", photo) AS photo, description, expireDate, pickUpTimeStart, pickUpTimeEnd,  createdAt, updatedAt FROM food WHERE id=?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [id]);
+
+    if (rows.length === 0) {
+        throw new Error('Data Makanan Tidak Ditemukan');
+    }
+    console.log(rows[0]);
+    return rows[0];
+}
+
+const getFoodByIdToUpdate = async (id) => {
+    console.log(id);
+    const SQLQuery = 'SELECT id, seller_id, seller_city_id, name, price, stock, status, photo, description, expireDate, pickUpTimeStart, pickUpTimeEnd,  createdAt, updatedAt FROM food WHERE id=?';
     const [rows, _] = await dbPool.execute(SQLQuery, [id]);
 
     if (rows.length === 0) {
@@ -246,5 +258,6 @@ module.exports = {
     getReadyFoods,
     getUnReadyFoods,
     getFoodBySellerId,
-    updateFoodIfCancelBySeller
+    updateFoodIfCancelBySeller,
+    getFoodByIdToUpdate
 }

@@ -223,7 +223,7 @@ app.delete('/deleteFood', async (req, res, next) => {
 app.put('/updateFood', upload.single('photo'), async (req, res, next) => {
     try {
 
-        const getPhotoOld = await foodModel.getFoodById(req.body.id);
+        const getPhotoOld = await foodModel.getFoodByIdToUpdate(req.body.id);
         let imagePath = getPhotoOld.photo;
         if (req.file) {
             const newFileName = `${nanoid(16)}${path.extname(req.file.originalname)}`;
