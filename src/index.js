@@ -259,7 +259,7 @@ app.put('/updateFood', upload.single('photo'), async (req, res, next) => {
 
 
 // ORDER FOOD
-app.post('/orderFood', async (req, res, next) => {
+app.post('/orders', async (req, res, next) => {
     try {
         const dataOrder = {
             food_id: req.body.food_id,
@@ -274,7 +274,8 @@ app.post('/orderFood', async (req, res, next) => {
         }
         
         await orderModel.createNewOrder(dataOrder);
-        res.status(201).json({ message: 'Order Food Berhasil Sedang Menunggu Konfirmasi Toko' });
+        res.status(201).json({ status: 200,
+            message: 'Order Food Berhasil Sedang Menunggu Konfirmasi Toko' });
     } catch (error) {
         next(error); 
     }
