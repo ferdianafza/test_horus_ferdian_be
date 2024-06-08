@@ -1059,9 +1059,9 @@ app.get('/getCommentAll', async (req, res, next) => {
     }
 });
 
-app.get('/getCommentByIdSeller', async (req, res, next) => {
+app.get('/getCommentByIdSeller/:id_seller', async (req, res, next) => {
     try {
-         const id_seller =  req.body.id_seller
+         const id_seller =  req.params.id_seller
 
         const [comments] = await commentModel.getCommentByIdSeller(id_seller);
         res.status(201).json({
