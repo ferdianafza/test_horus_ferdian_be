@@ -18,6 +18,7 @@ const getAllOrders = () => {
             o.amount, 
             o.price, 
             o.status,
+            o.createdAt,
             f.name AS food_name,
             s.name AS seller_name,
             c.name AS customer_name
@@ -43,6 +44,7 @@ const getOrdersBySellerId = async (seller_id) => {
             o.amount, 
             o.price, 
             o.status,
+            o.createdAt,
             f.name AS food_name,
             s.name AS seller_name,
             c.name AS customer_name
@@ -75,6 +77,7 @@ const getOrdersByCustomerId = async (customer_id) => {
             o.amount, 
             o.price, 
             o.status,
+            o.createdAt,
             f.name AS food_name,
             s.name AS seller_name,
             c.name AS customer_name
@@ -107,6 +110,7 @@ const getOrdersByFoodId = async (food_id) => {
             o.amount, 
             o.price, 
             o.status,
+            o.createdAt,
             f.name AS food_name,
             s.name AS seller_name,
             c.name AS customer_name
@@ -139,6 +143,7 @@ const getOrdersByOrderId = async (order_id) => {
             o.amount, 
             o.price, 
             o.status,
+            o.createdAt,
             f.name AS food_name,
             s.name AS seller_name,
             c.name AS customer_name
@@ -171,6 +176,7 @@ const checkNewOrder = async (seller_id) => {
             o.amount, 
             o.price, 
             o.status,
+            o.createdAt,
             f.name AS food_name,
             s.name AS seller_name,
             c.name AS customer_name
