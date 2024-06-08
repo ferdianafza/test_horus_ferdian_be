@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: May 25, 2024 at 09:19 AM
+-- Generation Time: Jun 07, 2024 at 04:38 PM
 -- Server version: 10.4.25-MariaDB
 -- PHP Version: 8.1.10
 
@@ -186,7 +186,12 @@ INSERT INTO `customer` (`id_cust`, `name`, `nomorWA`, `address`, `city_id`, `cit
 ('X6Yi6FpPDUPQ7yBP', 'korkor', '082115759568', 'margaasih', 1, 1, 'Pf3Cfof-i7s03HDY'),
 ('Hz_ZwUmRO959iYj1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'lzxA8-2rdDWjNmhT'),
 ('nFDI6M9qBawpm3O1', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'A2pZ2__E3UiB4UuN'),
-('T9WnXW-KSfmk22yA', 'ferdian afza', '082127015766', 'bandung', 1, 1, '_8QBaL2dUsCORucP');
+('T9WnXW-KSfmk22yA', 'ferdian afza', '082127015766', 'bandung', 1, 1, '_8QBaL2dUsCORucP'),
+('GFEiNMIwM0Dk_7S5', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'Gj8Y4br9IRvvA757'),
+('NQkvkXpjfXnJqE5I', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'E01R913XOLQOKH3Y'),
+('XAy-pSipbWNRJCD_', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'p7t-_VzIpfFSwNvS'),
+('_w1qYAJBLK_1VACP', 'korkor', '082115759568', 'margaasih', 1, 1, '_bLfQrdmTWwg-sjy'),
+('BQSWA6MbQGAcbem9', 'ferdian afza', '082127015766', 'bandung', 1, 1, 'uq2bJd6t42Wz7YQ_');
 
 -- --------------------------------------------------------
 
@@ -216,13 +221,14 @@ CREATE TABLE `food` (
 --
 
 INSERT INTO `food` (`id`, `seller_id`, `seller_city_id`, `name`, `price`, `stock`, `status`, `photo`, `description`, `expireDate`, `pickUpTimeStart`, `pickUpTimeEnd`, `createdAt`, `updatedAt`) VALUES
-('a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 1, 'kuah soto', 5000, 5, 1, '1715778679740-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:11:19', '2024-05-15 20:11:19'),
+('a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 1, 'kuah soto', 5000, 1, 1, '1715778679740-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:11:19', '2024-05-15 20:11:19'),
 ('WidTuFbUUDb-jTnb', 'ug7M7mFqhagndXeN', 1, 'Donat Madu', 3000, 10, 1, '1715778734162-mcqueen.jpeg', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:12:14', '2024-05-15 20:12:14'),
 ('Q0zNKIjkw9ES5zsu', 'ug7M7mFqhagndXeN', 1, 'donat madu enak', 50000, 0, 0, 'Sj0e4sGpgs9Y1jge.jpeg', 'enak bos', '23.20 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 20:26:39', '2024-05-15 21:39:16'),
 ('nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 1, 'Donat Madu susu', 3000, 10, 1, 'TyZ_lVxgVA-Bq8n5.png', 'kauh soto enak', '23.00 15/05/2024', '00:00:00', '00:00:00', '2024-05-15 22:33:57', '2024-05-15 22:33:57'),
 ('dA_MSO-9g6qlTzKd', 'lRB4146MGMwNYmUO', 1, 'Donat Madu susu', 3000, 10, 1, 'm47HjZGihAiGwNCk.png', 'kauh soto enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:39:15', '2024-05-17 21:39:15'),
 ('KRKfGBCd9NtsIMeI', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu', 1000, 10, 1, 'jRReEobbD_3NwFKI.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:40:07', '2024-05-17 21:40:07'),
-('b7J0UTwT0KSqmVMd', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu 2', 1000, 10, 1, 'l6bGduLXFngAybCq.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:42:06', '2024-05-17 21:42:06');
+('b7J0UTwT0KSqmVMd', 'lRB4146MGMwNYmUO', 1, 'Bola Bola susu 2', 1000, 10, 1, 'l6bGduLXFngAybCq.png', 'bola bola susu enak', '23.00 15/05/2024', '20:00:00', '23:00:00', '2024-05-17 21:42:06', '2024-05-17 21:42:06'),
+('8qtSUnIe5TZsBcv8', '3aNiqF5g2FnpgtQH', 1, 'aws susu teh', 50000, 10, 1, '5J0xC9fGUiXhprx9.png', 'enak bos', '23.20 15/05/2024', '21:00:00', '23:30:00', '2024-05-28 23:30:49', '2024-05-29 00:10:39');
 
 -- --------------------------------------------------------
 
@@ -247,7 +253,11 @@ CREATE TABLE `orders` (
 --
 
 INSERT INTO `orders` (`order_id`, `food_id`, `seller_id`, `customer_id`, `amount`, `price`, `status`, `createdAt`, `updatedAt`) VALUES
-('4mwDO3iEpUh5pHvi', 'nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 'nFDI6M9qBawpm3O1', '1', '3000', 'diproses', '2024-05-15 22:34:44', '2024-05-21 20:10:09');
+('4mwDO3iEpUh5pHvi', 'nJb5IudXbn72sP8n', 'ug7M7mFqhagndXeN', 'nFDI6M9qBawpm3O1', '1', '3000', 'diproses', '2024-05-15 22:34:44', '2024-05-21 20:10:09'),
+('XSkgKwbawa0UJf6I', 'a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 'X6Yi6FpPDUPQ7yBP', '1', '5000', 'diterima', '2024-06-06 11:36:26', '2024-06-06 11:36:26'),
+('a8y1ihVSFmZmOLVT', 'a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 'X6Yi6FpPDUPQ7yBP', '1', '5000', 'diterima', '2024-06-06 11:37:50', '2024-06-06 11:37:50'),
+('LVCsguJXaVPctOAG', 'a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 'X6Yi6FpPDUPQ7yBP', '1', '5000', 'diterima', '2024-06-06 11:41:11', '2024-06-06 11:41:11'),
+('7CIyNbXePu6y1boT', 'a6fWAxvBBCHOxQa1', 'ug7M7mFqhagndXeN', 'X6Yi6FpPDUPQ7yBP', '1', '5000', 'diterima', '2024-06-07 20:35:33', '2024-06-07 20:35:33');
 
 -- --------------------------------------------------------
 
@@ -327,7 +337,8 @@ CREATE TABLE `seller` (
 INSERT INTO `seller` (`id_seller`, `name`, `desc`, `nomorWA`, `address`, `city_id`, `city_province_id`, `user_user_id`) VALUES
 ('h7tj6Qyf8UPtgafJ', 'korkor', 'yuhu ini warung kornel', '082115759568', 'margaasih', 1, 1, '1d_yWGuBE9rG9moU'),
 ('ug7M7mFqhagndXeN', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, 'oSHPuh8329roMfFs'),
-('lRB4146MGMwNYmUO', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '8Jof8yVwdC2zPJPD');
+('lRB4146MGMwNYmUO', 'kornelius', 'toko kue donat', '082115759568', 'bandung', 1, 1, '8Jof8yVwdC2zPJPD'),
+('3aNiqF5g2FnpgtQH', 'awsseller', 'ini update', '082115759568', 'margaasih', 1, 1, 'KaEyeor-7C4C5OZ6');
 
 -- --------------------------------------------------------
 
@@ -343,7 +354,7 @@ CREATE TABLE `user` (
   `role` enum('customer','seller','admin') NOT NULL,
   `createdAt` varchar(100) NOT NULL,
   `updatedAt` varchar(100) NOT NULL,
-  `photo` varchar(50) NOT NULL
+  `photo` varchar(255) NOT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4;
 
 --
@@ -360,7 +371,14 @@ INSERT INTO `user` (`user_id`, `username`, `email`, `password`, `role`, `created
 ('0pOCPZW6EzLThPfq', 'admin', 'admin2@gmail.com', '$2b$10$i6UVJo31T3Q7pugWFCuoMuw3Zqf2O3c6CPF5iLbT/ft1Xl6n2fety', 'admin', '2024-05-15 15:49:30', '2024-05-15 15:49:30', '1715762969951-mcqueen.jpeg'),
 ('_8QBaL2dUsCORucP', 'cs1', 'cs@gmail.com', '$2b$10$mRjNz04d1naY9Dm3aSJ5hO5o2TZkezYPbJzmgWehKT8KLs0Yy56c6', 'customer', '2024-05-16 15:41:01', '2024-05-16 15:41:01', 'U2_uBOoHf31IBEtJ.png'),
 ('H9O2l49FzCGFstW-', 'admin5', 'admin5@gmail.com', '$2b$10$HIxmTEC7WHD3v6aIRes2nu80LM6iRHVFDo/tHc8en0aaGGVtr9dD.', 'admin', '2024-05-16 15:41:46', '2024-05-16 15:41:46', 'Mg_2AWCZN3_I9XnL.jpeg'),
-('8Jof8yVwdC2zPJPD', 'seller', 'seller@gmail.com', '$2b$10$cU3.6/1yJr9zV1tBnZ.dEuFnScA2aex2g9.XAxFzU1B9lBV.5akg6', 'seller', '2024-05-16 15:42:24', '2024-05-16 15:42:24', 'mEWpsZUVHgzrP_Iy.jpeg');
+('8Jof8yVwdC2zPJPD', 'seller', 'seller@gmail.com', '$2b$10$cU3.6/1yJr9zV1tBnZ.dEuFnScA2aex2g9.XAxFzU1B9lBV.5akg6', 'seller', '2024-05-16 15:42:24', '2024-05-16 15:42:24', 'mEWpsZUVHgzrP_Iy.jpeg'),
+('Gj8Y4br9IRvvA757', 'csaws2', 'csaws2@gmail.com', '$2b$10$bWHA48h.Yiy0FLpvT/tljOfc8FFT3EgZlaNCt1VuYYZJ/csku6u7S', 'customer', '2024-05-28 22:27:26', '2024-05-28 22:27:26', 'https://photo-foodbless.s3.ap-southeast-1.amazonaw'),
+('E01R913XOLQOKH3Y', 'csaws3', 'csaws3@gmail.com', '$2b$10$awNzdymTbkawoL8n4oy0au4HR7hur6QjNK7lICBt7C0/F8BboiTYa', 'customer', '2024-05-28 22:31:54', '2024-05-28 22:31:54', 'https://photo-foodbless.s3.ap-southeast-1.amazonaws.com/storage_folder/I-tMxB0UR20w-Cax.png'),
+('p7t-_VzIpfFSwNvS', 'csaws5', 'csaws5@gmail.com', '$2b$10$w9Q8LTmx1GaPOtAEP4TW1.Dbj/cCqZeTS3uaYdPSc74kNF.sg9oXC', 'customer', '2024-05-28 22:39:45', '2024-05-28 22:39:45', 'IDm3B9glyG2V0yN_.png'),
+('_bLfQrdmTWwg-sjy', 'CSAWS', 'csawsbos@gmail.com', '$2b$10$QsBVTRZ9Y2JGeRY4q/kRi.32MugPCEQNskBYTpbN4QTdWGmMSuJlG', 'customer', '2024-05-28 22:41:07', '2024-05-28 23:21:46', 'e8FFyJaAteGSiwVz.png'),
+('KaEyeor-7C4C5OZ6', 'AWSSELLER', 'awsseller@gmail.com', '$2b$10$HYqngd9J/W1MuiHYxzQe1.VCW3BPwRsk.I7HCrJWyJymEh2e1jFCa', 'seller', '2024-05-28 23:02:02', '2024-05-28 23:15:36', '5Cse4eBcvE57xP29.png'),
+('fg2o-OOeUZyT15Ok', 'adminaws', 'adminaws@gmail.com', '$2b$10$2E7snSA0WNwcVsqXTmEEk.7hkMsm55ySEvnv4z2jIaxmwJQomKN7e', 'admin', '2024-05-28 23:02:43', '2024-05-28 23:02:43', 'AlMuWC1bsoH7caNX.jpeg'),
+('uq2bJd6t42Wz7YQ_', 'csaws7', 'csaws7@gmail.com', '$2b$10$ADKqvNG2w1yzNvrR/VubhOStOgx7j9gpZe2tn8D2db1BTwF0gjm0C', 'customer', '2024-05-30 16:19:52', '2024-05-30 16:19:52', 'WlH45yhFf2UwN1IU.png');
 
 --
 -- Indexes for dumped tables

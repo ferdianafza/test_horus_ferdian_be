@@ -280,6 +280,7 @@ app.post('/orders', async (req, res, next) => {
         next(error); 
     }
 });
+
 // ambil semua data orders
 app.get('/getAllOrders', async (req, res, next) => {
     try {
@@ -295,9 +296,9 @@ app.get('/getAllOrders', async (req, res, next) => {
     }
 });
 // ambil data order berdasarkan seller id
-app.get('/getOrdersBySellerId', express.json(), async (req, res, next) => {
+app.get('/getOrdersBySellerId/:seller_id', express.json(), async (req, res, next) => {
     try {
-        const seller_id = req.body.seller_id; 
+        const seller_id = req.params.seller_id; 
         const [orders] = await orderModel.getOrdersBySellerId(seller_id);
         res.status(200).json({
             status: 200,
@@ -309,9 +310,9 @@ app.get('/getOrdersBySellerId', express.json(), async (req, res, next) => {
     }
 });
 // ambil data order berdasarkan customer id
-app.get('/getOrdersByCustomerId', express.json(), async (req, res, next) => {
+app.get('/getOrdersByCustomerId/:customer_id', express.json(), async (req, res, next) => {
     try {
-        const customer_id = req.body.customer_id; 
+        const customer_id = req.params.customer_id; 
         const [orders] = await orderModel.getOrdersByCustomerId(customer_id);
         res.status(200).json({
             status: 200,
@@ -323,9 +324,9 @@ app.get('/getOrdersByCustomerId', express.json(), async (req, res, next) => {
     }
 });
 // ambil data order berdasarkan food id
-app.get('/getOrdersByFoodId', express.json(), async (req, res, next) => {
+app.get('/getOrdersByFoodId/:food_id', express.json(), async (req, res, next) => {
     try {
-        const food_id = req.body.food_id; 
+        const food_id = req.params.food_id; 
         const [orders] = await orderModel.getOrdersByFoodId(food_id);
         res.status(200).json({
             status: 200,
@@ -337,9 +338,9 @@ app.get('/getOrdersByFoodId', express.json(), async (req, res, next) => {
     }
 });
 // ambil data order berdasarkan order id
-app.get('/getOrdersByOrderId', express.json(), async (req, res, next) => {
+app.get('/getOrdersByOrderId/:order_id', express.json(), async (req, res, next) => {
     try {
-        const order_id = req.body.order_id; 
+        const order_id = req.params.order_id; 
         const [orders] = await orderModel.getOrdersByOrderId(order_id);
         res.status(200).json({
             status: 200,
@@ -351,9 +352,9 @@ app.get('/getOrdersByOrderId', express.json(), async (req, res, next) => {
     }
 });
 
-app.get('/checkNewOrder', express.json(), async (req, res, next) => {
+app.get('/checkNewOrder/:seller_id', express.json(), async (req, res, next) => {
     try {
-        const seller_id = req.body.seller_id; 
+        const seller_id = req.params.seller_id; 
         const [orders] = await orderModel.checkNewOrder(seller_id);
         res.status(200).json({
             status: 200,
