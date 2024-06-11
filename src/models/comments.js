@@ -10,18 +10,27 @@ const saltRounds = 10;
 const jwtSecret = 'SECRET';
 
 const getAllComments = () => {
-    const SQLQuery = 'SELECT id_comment, id_seller, id_cust, description, createdAt FROM comment';
+    const SQLQuery = `
+        SELECT c.id_comment, c.id_seller, c.id_cust, c.description, c.createdAt, cust.name 
+        FROM comment c
+        JOIN customer cust ON c.id_cust = cust.id_cust
+    `;
 
     return dbPool.execute(SQLQuery);
 }
 
 const getCommentByIdSeller = async (id_seller) => {
-    const SQLQuery = 'SELECT id_comment, id_seller, id_cust, description, createdAt FROM comment WHERE id_seller = ?';
+    const SQLQuery = `
+        SELECT c.id_comment, c.id_seller, c.id_cust, c.description, c.createdAt, cust.name
+        FROM comment c
+        JOIN customer cust ON c.id_cust = cust.id_cust
+        WHERE c.id_seller = ?
+    `;
 
     const [result] = await dbPool.execute(SQLQuery, [id_seller]);
     return result;
-
 }
+
 
 
 const createComment = async (body) => {
