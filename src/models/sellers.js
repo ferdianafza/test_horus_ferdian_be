@@ -147,6 +147,7 @@ const getSellerById = async (id_seller) => {
             s.nomorWA, 
             s.address, 
             s.city_id, 
+            s.desc,
             s.city_province_id, 
             u.user_id, 
             u.username, 
