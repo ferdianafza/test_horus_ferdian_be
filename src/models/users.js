@@ -14,28 +14,23 @@ const getAllUsers = () => {
 }
 
 const createNewUser = async (body) => {
-    const { email, password, name,provinceId, cityId, address, latitude, longitude } = body;
+    const { username, email, password, nama} = body;
     const hashedPassword = await bcrypt.hash(password, saltRounds);
-    const userId = nanoid(16);
     const createdAt = new Date().toISOString();
-    const updatedAt = createdAt;
-    const SQLQuery = `INSERT INTO user (id, email, 
-                                        password, name,provinceId, cityId, 
-                                        address, latitude, 
-                                        longitude, createdAt, updatedAt ) 
-                      VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)`;
-    const values = [userId, email, hashedPassword, name,provinceId, cityId, address, latitude, longitude, createdAt, updatedAt];
+    const SQLQuery = `INSERT INTO user (username, password, email, nama, tanggal_daftar ) 
+                      VALUES (?, ?, ?, ?, ?)`;
+    const values = [username, hashedPassword, email, nama, createdAt ];
     return dbPool.execute(SQLQuery, values);
 }
 
 const authenticateUser = async (body) => {
     
-    console.log(body.email, body.password);
-    if (!body.email || !body.password) {
-        throw new Error('Email dan password harus diisi');
+    console.log(body.username, body.password);
+    if (!body.username || !body.password) {
+        throw new Error('username dan password harus diisi');
     }
-    const SQLQuery = 'SELECT user_id, username, email, password, role FROM user WHERE email = ?';
-    const [rows, _] = await dbPool.execute(SQLQuery, [body.email]);
+    const SQLQuery = 'SELECT * FROM user WHERE username = ?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [body.username]);
     if (rows.length === 0) {
         throw new Error('User Tidak Ditemukan');
     }
@@ -59,9 +54,9 @@ const deleteUser = (idSeller) => {
     return dbPool.execute(SQLQuery);
 }
 
-const getUserByEmail = async (email) => {
-    const SQLQuery = 'SELECT * FROM user WHERE email = ?';
-    const [rows, _] = await dbPool.execute(SQLQuery, [email]);
+const getUserByUsername = async (username) => {
+    const SQLQuery = 'SELECT * FROM user WHERE username = ?';
+    const [rows, _] = await dbPool.execute(SQLQuery, [username]);
 
     if (rows.length === 0) {
         throw new Error('Akun Tidak Ditemukan');
@@ -355,7 +350,7 @@ module.exports = {
     getAllUsers,
     createNewUser,
     deleteUser,
-    getUserByEmail,
+    getUserByUsername,
     getUserById,
     authenticateUser,
     checkRoleUserByEmail,
